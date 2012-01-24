@@ -32,7 +32,7 @@ with Ada.Strings.Unbounded;
 use  Ada.Strings.Unbounded;
 with Dom.Core;
 
-package Mckae.XML.XPath.Expressions is
+package McKae.XML.XPath.Expressions is
 
    type Node_Items is
       record
@@ -150,4 +150,4 @@ package Mckae.XML.XPath.Expressions is
                                 Args          : in out Argument_List;
                                 Result        :    out Expression_Values);
 
-end Mckae.XML.XPath.Expressions;
+end McKae.XML.XPath.Expressions;
