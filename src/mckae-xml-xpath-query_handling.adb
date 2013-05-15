@@ -56,10 +56,8 @@ package body Mckae.XML.XPath.Query_Handling is
 
       Path := Locations.Get_Path;
 
-      Path.Absolute := Xpath_Query (Xpath_Query'First) = '/';
-      Step := Path.Path.Element (Path.Steps);
-      Step.Output_Step := True;
-      Path.Path.Replace_Element (Path.Steps, Step);
+      Path.Absolute := Xpath_Query(Xpath_Query'First) = '/';
+      Path.Path(Path.Steps).Output_Step := True;
 
       return Path;
 
