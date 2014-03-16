@@ -34,8 +34,6 @@ with Dom.Core;
 
 package Mckae.XML.XPath.Expressions is
 
-   type String_Ptr is access all String;
-
    type Node_Items is
       record
          N             : Dom.Core.Node;
@@ -147,7 +145,7 @@ package Mckae.XML.XPath.Expressions is
 
    -- Evaluate the core library function in the context of the given
    --  node.
-   procedure Evaluate_Function (Function_Name : in     String_Ptr;
+   procedure Evaluate_Function (Function_Name : in     String;
                                 Context_Node  : in     Node_Items;
                                 Args          : in out Argument_List;
                                 Result        :    out Expression_Values);

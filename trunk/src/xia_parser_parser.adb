@@ -28,6 +28,8 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Ada.Strings.Unbounded;
+
 with Text_IO;
 use Text_IO;
 with xia_parser;
@@ -43,7 +45,11 @@ package body xia_parser_Parser is
    use Language_YY2_Lexical_Analyzer;
 
    Parse_Tree : Parseable_Ptr;
-   Token_String : String_Ptr;
+   Token_String : Ada.Strings.Unbounded.Unbounded_String;
+
+   function New_String (S : String)
+                        return Ada.Strings.Unbounded.Unbounded_String
+                        renames Ada.Strings.Unbounded.To_Unbounded_String;
 
    procedure YYError(S : in String := "Syntax Error") is
    begin
@@ -54,6 +60,8 @@ package body xia_parser_Parser is
    end YYError;
 
 procedure YYParse is
+
+      use Ada.Strings.Unbounded;
 
    -- Rename User Defined Packages to Internal Names.
     package yy_goto_tables         renames
@@ -71,7 +79,7 @@ procedure YYParse is
    procedure yyclearin;
 
 
-   package yy is
+      package yy is
 
        -- the size of the value and state stacks
        stack_size : constant Natural := 300;
@@ -319,345 +327,345 @@ begin
 
 when  1 =>
 --#line  70
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,NCNAME_token);
 
 when  2 =>
 --#line  74
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DECIMAL_LITERAL_token);
 
 when  3 =>
 --#line  78
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,INTEGER_token);
 
 when  4 =>
 --#line  82
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DQ_LITERAL_token);
 
 when  5 =>
 --#line  86
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,SQ_LITERAL_token);
 
 when  6 =>
 --#line  90
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,LE_token);
 
 when  7 =>
 --#line  94
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,LT_token);
 
 when  8 =>
 --#line  98
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,GE_token);
 
 when  9 =>
 --#line  102
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,GT_token);
 
 when  10 =>
 --#line  106
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,NE_token);
 
 when  11 =>
 --#line  110
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,EQ_token);
 
 when  12 =>
 --#line  114
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,V_BAR_token);
 
 when  13 =>
 --#line  118
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DOLLAR_token);
 
 when  14 =>
 --#line  122
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,COMMA_token);
 
 when  15 =>
 --#line  126
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,AT_SIGN_token);
 
 when  16 =>
 --#line  130
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DOUBLE_COLON_token);
 
 when  17 =>
 --#line  134
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,COLON_token);
 
 when  18 =>
 --#line  138
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DOUBLE_SLASH_token);
 
 when  19 =>
 --#line  142
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,SLASH_token);
 
 when  20 =>
 --#line  146
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DOUBLE_DOT_token);
 
 when  21 =>
 --#line  150
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DOT_token);
 
 when  22 =>
 --#line  154
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,MINUS_token);
 
 when  23 =>
 --#line  158
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,PLUS_token);
 
 when  24 =>
 --#line  162
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,STAR_token);
 
 when  25 =>
 --#line  166
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,R_BRACKET_token);
 
 when  26 =>
 --#line  170
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,L_BRACKET_token);
 
 when  27 =>
 --#line  174
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,R_PAREN_token);
 
 when  28 =>
 --#line  178
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,L_PAREN_token);
 
 when  29 =>
 --#line  182
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,OR_token);
 
 when  30 =>
 --#line  186
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,MOD_token);
 
 when  31 =>
 --#line  190
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DIV_token);
 
 when  32 =>
 --#line  194
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,AND_token);
 
 when  33 =>
 --#line  198
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,NODE_token);
 
 when  34 =>
 --#line  202
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,PROCESSING_INSTRUCTION_token);
 
 when  35 =>
 --#line  206
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,TEXT_token);
 
 when  36 =>
 --#line  210
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,COMMENT_token);
 
 when  37 =>
 --#line  214
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,SELF_token);
 
 when  38 =>
 --#line  218
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,PRECEDING_SIBLING_token);
 
 when  39 =>
 --#line  222
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,PRECEDING_token);
 
 when  40 =>
 --#line  226
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,PARENT_token);
 
 when  41 =>
 --#line  230
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,NAMESPACE_token);
 
 when  42 =>
 --#line  234
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,FOLLOWING_SIBLING_token);
 
 when  43 =>
 --#line  238
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,FOLLOWING_token);
 
 when  44 =>
 --#line  242
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DESCENDANT_OR_SELF_token);
 
 when  45 =>
 --#line  246
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,DESCENDANT_token);
 
 when  46 =>
 --#line  250
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,CHILD_token);
 
 when  47 =>
 --#line  254
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,ATTRIBUTE_token);
 
 when  48 =>
 --#line  258
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,ANCESTOR_OR_SELF_token);
 
 when  49 =>
 --#line  262
- Token_String := new String'(Get_Token_String);
+ Token_String := New_String(Get_Token_String);
 
-yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Token_String.all'Length,
+yyval := new Parseable_Token'(Get_Current_Line,Get_Current_Column-Length(Token_String),
      Token_String,ANCESTOR_token);
 
 when  50 =>
