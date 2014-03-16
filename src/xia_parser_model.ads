@@ -38,8 +38,8 @@ use  Mckae.XML.XPath.Expressions;
 with Ada.Strings.Unbounded;
 use  Ada.Strings.Unbounded;
 
+
 package xia_parser_Model is
-   subtype String_Ptr is McKae.XML.XPath.Expressions.String_Ptr;
 
    type Parseable is abstract tagged null record;
    procedure Pathify(This : in out Parseable) is abstract;
@@ -51,7 +51,7 @@ package xia_parser_Model is
    type Parseable_Token is new Parseable with record
       Line         : Natural;
       Column       : Natural;
-      Token_String : String_Ptr;
+      Token_String : Unbounded_String;
       Token_Type   : xia_parser.Token;
    end record;
    procedure Pathify(This : in out Parseable_Token);

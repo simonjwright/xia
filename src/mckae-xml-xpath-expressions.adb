@@ -854,12 +854,11 @@ package body Mckae.XML.XPath.Expressions is
 
    ----------------------------------------------------------
 
-   procedure Evaluate_Function (Function_Name : in     String_Ptr;
+   procedure Evaluate_Function (Function_Name : in     String;
                                 Context_Node  : in     Node_Items;
                                 Args          : in out Argument_List;
                                 Result        :    out Expression_Values) is
 
-      Func_Name : constant String := Function_Name.all;
       Evaluated : Boolean := False;
 
       Working_Node_List : Dom.Core.Node_List;
@@ -869,19 +868,19 @@ package body Mckae.XML.XPath.Expressions is
    begin
       -- Reduce (at least a bit) the number of string comparisons that
       --  have to be done to locate the function name
-      case Func_Name(1) is
+      case Function_Name(Function_Name'First) is
          when 'b' =>
-            if Func_Name = "boolean" then
+            if Function_Name = "boolean" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Boolean);
                Result := Args(1);
             end if;
          when 'c' =>
-            if Func_Name = "count" then
+            if Function_Name = "count" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Node_List);
                Result := (As_Number, Long_Float(Length(Args(1).Ns)), Normal);
-            elsif Func_Name = "concat" then
+            elsif Function_Name = "concat" then
                Check_Arg_Count(Args, 2, Evaluated, Natural'Last);
                Coerce(Args(1), As_String);
                Coerce(Args(2), As_String);
@@ -890,40 +889,40 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(A), As_String);
                   Append(Result.S, Args(A).S);
                end loop;
-            elsif Func_Name = "contains" then
+            elsif Function_Name = "contains" then
                Check_Arg_Count(Args, 2, Evaluated);
                Result := (As_Boolean, Index(Args(1).S, To_String(Args(2).S)) /= 0);
-            elsif Func_Name = "ceiling" then
+            elsif Function_Name = "ceiling" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Number);
                Result := (As_Number, Long_Float'Ceiling(Args(1).F), Normal);
             end if;
 
          when 'f' =>
-            if Func_Name = "false" then
+            if Function_Name = "false" then
                Check_Arg_Count(Args, 0, Evaluated);
                Result := (As_Boolean, False);
-            elsif Func_Name = "floor" then
+            elsif Function_Name = "floor" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Number);
                Result := (As_Number, Long_Float'Floor(Args(1).F), Normal);
             end if;
 
          when 'i' =>
-            if Func_Name = "id" then
+            if Function_Name = "id" then
                Check_Arg_Count(Args, 1, Evaluated);
                Result := Extract_By_Id(Context_Node.N, Args(1));
             end if;
 
          when 'l' =>
-            if Func_Name = "last" then
+            if Function_Name = "last" then
                Check_Arg_Count(Args, 0, Evaluated);
                Result := (As_Number, Long_Float(Context_Node.Node_Set_Size), Normal);
-            elsif Func_Name = "lang" then
+            elsif Function_Name = "lang" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_String);
                Result := (As_Boolean, Match_Lang(Args(1), Context_Node));
-            elsif Func_Name = "local-name" then
+            elsif Function_Name = "local-name" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -935,11 +934,11 @@ package body Mckae.XML.XPath.Expressions is
             end if;
 
          when 'n' =>
-            if Func_Name = "not" then
+            if Function_Name = "not" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Boolean);
                Result := (As_Boolean, not Args(1).B);
-            elsif Func_Name = "number" then
+            elsif Function_Name = "number" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -948,7 +947,7 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(1), As_Number);
                   Result := Args(1);
                end if;
-            elsif Func_Name = "normalize-space" then
+            elsif Function_Name = "normalize-space" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Result := (As_String, +String_Value(Context_Node.N));
@@ -956,7 +955,7 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(1), As_String);
                   Result := (As_String, +Scrub_String(Args(1)));
                end if;
-            elsif Func_Name = "namespace-uri" then
+            elsif Function_Name = "namespace-uri" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -965,7 +964,7 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(1), As_Node_List);
                   Result := Get_Namespace_URI(Args(1));
                end if;
-            elsif Func_Name = "name" then
+            elsif Function_Name = "name" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -977,20 +976,20 @@ package body Mckae.XML.XPath.Expressions is
             end if;
 
          when 'p' =>
-            if Func_Name = "position" then
+            if Function_Name = "position" then
                Check_Arg_Count(Args, 0, Evaluated);
                Result := (As_Number, Long_Float(Context_Node.Node_Position), Normal);
             end if;
 
         when 'r' =>
-            if Func_Name = "round" then
+            if Function_Name = "round" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Number);
                Result := Round_Value(Args(1));
             end if;
 
          when 's' =>
-            if Func_Name = "string" then
+            if Function_Name = "string" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -999,12 +998,12 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(1), As_String);
                   Result := Args(1);
                end if;
-            elsif Func_Name = "starts-with" then
+            elsif Function_Name = "starts-with" then
                Check_Arg_Count(Args, 2, Evaluated);
                Coerce(Args(1), As_String);
                Coerce(Args(2), As_String);
                Result := (As_Boolean, Index(Args(1).S, To_String(Args(2).S)) = 1);
-            elsif Func_Name = "substring-before" then
+            elsif Function_Name = "substring-before" then
                Check_Arg_Count(Args, 2, Evaluated);
                Coerce(Args(1), As_String);
                Coerce(Args(2), As_String);
@@ -1013,7 +1012,7 @@ package body Mckae.XML.XPath.Expressions is
                if Slice_Index /= 0 then
                   Result.S := Head(Args(1).S, Slice_Index - 1);
                end if;
-            elsif Func_Name = "substring-after" then
+            elsif Function_Name = "substring-after" then
                Check_Arg_Count(Args, 2, Evaluated);
                Result := (As_String, Null_Unbounded_String);
                Coerce(Args(1), As_String);
@@ -1023,14 +1022,14 @@ package body Mckae.XML.XPath.Expressions is
                   Result.S := Tail(Args(1).S,
                                    Length(Args(1).S) - (Slice_Index + Length(Args(2).S) - 1));
                end if;
-            elsif Func_Name = "substring" then
+            elsif Function_Name = "substring" then
                Check_Arg_Count(Args, 2, Evaluated, 3);
                Result := (As_String, Null_Unbounded_String);
                Coerce(Args(1), As_String);
                Coerce(Args(2), As_Number);
 
                Result.S := Extract_Slice(Args);
-            elsif Func_Name = "string-length" then
+            elsif Function_Name = "string-length" then
                Check_Arg_Count(Args, 0, Evaluated, 1);
                if Args'Length = 0 then
                   Dom.Core.Append_Node(Working_Node_List, Context_Node.N);
@@ -1040,17 +1039,17 @@ package body Mckae.XML.XPath.Expressions is
                   Coerce(Args(1), As_String);
                   Result := (As_Number, Long_Float(Length(Args(1).S)), Normal);
                end if;
-            elsif Func_Name = "sum" then
+            elsif Function_Name = "sum" then
                Check_Arg_Count(Args, 1, Evaluated);
                Coerce(Args(1), As_Node_List);
                Result := Sum_Values(Args(1));
             end if;
 
          when 't' =>
-            if Func_Name = "true" then
+            if Function_Name = "true" then
                Check_Arg_Count(Args, 0, Evaluated);
                Result := (As_Boolean, True);
-            elsif Func_Name = "translate" then
+            elsif Function_Name = "translate" then
                Check_Arg_Count(Args, 3, Evaluated);
                Coerce(Args(1), As_String);
                Coerce(Args(2), As_String);

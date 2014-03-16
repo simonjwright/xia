@@ -55,7 +55,10 @@ package body xia_parser_Model is
    ----------------------------------------------------------
 
    function "+"(S : String) return Unbounded_String
-     renames To_Unbounded_String;
+                renames To_Unbounded_String;
+
+   function "-" (U : Unbounded_String) return String
+                 renames To_String;
 
    ----------------------------------------------------------
 
@@ -103,17 +106,18 @@ package body xia_parser_Model is
    begin
       if Literal_Part.all'Tag = Literal_Nonterminal1'Tag then
          declare
-            Quoted_String : constant String :=
-              Literal_Nonterminal1(Literal_Part.all).DQ_Literal_Part.Token_String.all;
+            Quoted_String : Unbounded_String renames
+              Literal_Nonterminal1(Literal_Part.all).DQ_Literal_Part.Token_String;
          begin
-            S := To_Unbounded_String(Quoted_String(2 .. Quoted_String'Last - 1));
+--              S := To_Unbounded_String(Quoted_String(2 .. Quoted_String'Last - 1));
+            S := Unbounded_Slice(Quoted_String, 2, Length(Quoted_String) - 1);
          end;
       elsif Literal_Part.all'Tag = Literal_Nonterminal2'Tag then
          declare
-            Quoted_String : constant String :=
-              Literal_Nonterminal2(Literal_Part.all).SQ_Literal_Part.Token_String.all;
+            Quoted_String : Unbounded_String renames
+             Literal_Nonterminal2(Literal_Part.all).SQ_Literal_Part.Token_String;
          begin
-            S := To_Unbounded_String(Quoted_String(2 .. Quoted_String'Last - 1));
+            S := Unbounded_Slice(Quoted_String, 2, Length(Quoted_String) - 1);
          end;
       else
          pragma Assert(False);
@@ -133,12 +137,12 @@ package body xia_parser_Model is
    begin
       if Number_Part.all'Tag = Number_Nonterminal1'Tag then
          Value := Long_Float(Natural'Value
-                             (Number_Nonterminal1(Number_Part.all).Integer_Part.Token_String.all));
+                             (-Number_Nonterminal1(Number_Part.all).Integer_Part.Token_String));
          Special := Normal;
 
       elsif Number_Part.all'Tag = Number_Nonterminal2'Tag then
          Value := Long_Float'Value
-           (Number_Nonterminal2(Number_Part.all).Decimal_Literal_Part.Token_String.all);
+           (-Number_Nonterminal2(Number_Part.all).Decimal_Literal_Part.Token_String);
          Special := Normal;
 
       else
@@ -158,7 +162,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal1)
                          return Unbounded_String is
    begin
-      return +This.Ancestor_Part.Token_String.all;
+      return This.Ancestor_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -166,7 +170,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal2)
                          return Unbounded_String is
    begin
-      return +This.Ancestor_Or_Self_Part.Token_String.all;
+      return This.Ancestor_Or_Self_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -174,7 +178,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal3)
                          return Unbounded_String is
    begin
-      return +This.Attribute_Part.Token_String.all;
+      return This.Attribute_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -182,7 +186,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal4)
                          return Unbounded_String is
    begin
-      return +This.Child_Part.Token_String.all;
+      return This.Child_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -190,7 +194,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal5)
                          return Unbounded_String is
    begin
-      return +This.Descendant_Part.Token_String.all;
+      return This.Descendant_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -198,7 +202,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal6)
                          return Unbounded_String is
    begin
-      return +This.Descendant_Or_Self_Part.Token_String.all;
+      return This.Descendant_Or_Self_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -206,7 +210,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal7)
                          return Unbounded_String is
    begin
-      return +This.Following_Part.Token_String.all;
+      return This.Following_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -214,7 +218,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal8)
                          return Unbounded_String is
    begin
-      return +This.Following_Sibling_Part.Token_String.all;
+      return This.Following_Sibling_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -222,7 +226,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal9)
                          return Unbounded_String is
    begin
-      return +This.Namespace_Part.Token_String.all;
+      return This.Namespace_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -230,7 +234,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal10)
                          return Unbounded_String is
    begin
-      return +This.Parent_Part.Token_String.all;
+      return This.Parent_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -238,7 +242,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal11)
                          return Unbounded_String is
    begin
-      return +This.Preceding_Part.Token_String.all;
+      return This.Preceding_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -246,7 +250,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal12)
                          return Unbounded_String is
    begin
-      return +This.Preceding_Sibling_Part.Token_String.all;
+      return This.Preceding_Sibling_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -254,7 +258,7 @@ package body xia_parser_Model is
    function Get_Axis_Name(This : Axis_Name_Nonterminal13)
                          return Unbounded_String is
    begin
-      return +This.Self_Part.Token_String.all;
+      return This.Self_Part.Token_String;
    end Get_Axis_Name;
 
    ----------------------------------------------------------
@@ -262,7 +266,7 @@ package body xia_parser_Model is
    function Get_Node_Type_Name(This : Node_Type_Nonterminal1)
                          return Unbounded_String is
    begin
-      return +This.Comment_Part.Token_String.all;
+      return This.Comment_Part.Token_String;
    end Get_Node_Type_Name;
 
    ----------------------------------------------------------
@@ -270,7 +274,7 @@ package body xia_parser_Model is
    function Get_Node_Type_Name(This : Node_Type_Nonterminal2)
                          return Unbounded_String is
    begin
-      return +This.Text_Part.Token_String.all;
+      return This.Text_Part.Token_String;
    end Get_Node_Type_Name;
 
    ----------------------------------------------------------
@@ -278,7 +282,7 @@ package body xia_parser_Model is
    function Get_Node_Type_Name(This : Node_Type_Nonterminal3)
                          return Unbounded_String is
    begin
-      return +This.Processing_Instruction_Part.Token_String.all;
+      return This.Processing_Instruction_Part.Token_String;
    end Get_Node_Type_Name;
 
    ----------------------------------------------------------
@@ -286,7 +290,7 @@ package body xia_parser_Model is
    function Get_Node_Type_Name(This : Node_Type_Nonterminal4)
                          return Unbounded_String is
    begin
-      return +This.Node_Part.Token_String.all;
+      return This.Node_Part.Token_String;
    end Get_Node_Type_Name;
 
    ----------------------------------------------------------
@@ -715,12 +719,10 @@ package body xia_parser_Model is
    procedure Pathify (This : in out QName_nonterminal2) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String
-                                  (NCNAME_Or_ID_Nonterminal1
-                                   (This.NCName_Or_ID_Part2.all).NCName_Part.Token_String.all),
-                                  Prefix    => To_Unbounded_String
-                                  (NCNAME_Or_ID_Nonterminal1
-                                   (This.NCName_Or_ID_Part1.all).NCName_Part.Token_String.all));
+                                  Name      => NCNAME_Or_ID_Nonterminal1
+                                   (This.NCName_Or_ID_Part2.all).NCName_Part.Token_String,
+                                  Prefix    => NCNAME_Or_ID_Nonterminal1
+                                   (This.NCName_Or_ID_Part1.all).NCName_Part.Token_String);
    end Pathify;
 
    -------------
@@ -730,7 +732,7 @@ package body xia_parser_Model is
    procedure Pathify(This : in out NCNAME_Or_ID_nonterminal1) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String(This.NCName_Part.Token_String.all),
+                                  Name      => This.NCName_Part.Token_String,
                                   Prefix    => Null_Unbounded_String);
    end Pathify;
 
@@ -763,7 +765,7 @@ package body xia_parser_Model is
    procedure Pathify(This : in out NCNAME_Or_ID_nonterminal4) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String(This.And_Part.Token_String.all),
+                                  Name      => This.And_Part.Token_String,
                                   Prefix    => Null_Unbounded_String);
    end Pathify;
 
@@ -774,7 +776,7 @@ package body xia_parser_Model is
    procedure Pathify(This : in out NCNAME_Or_ID_nonterminal5) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String(This.Or_Part.Token_String.all),
+                                  Name      => This.Or_Part.Token_String,
                                   Prefix    => Null_Unbounded_String);
    end Pathify;
 
@@ -785,7 +787,7 @@ package body xia_parser_Model is
    procedure Pathify(This : in out NCNAME_Or_ID_nonterminal6) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String(This.Mod_Part.Token_String.all),
+                                  Name      => This.Mod_Part.Token_String,
                                   Prefix    => Null_Unbounded_String);
    end Pathify;
 
@@ -796,7 +798,7 @@ package body xia_parser_Model is
    procedure Pathify(This : in out NCNAME_Or_ID_nonterminal7) is
    begin
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
-                                  Name      => To_Unbounded_String(This.Div_Part.Token_String.All),
+                                  Name      => This.Div_Part.Token_String,
                                   Prefix    => Null_Unbounded_String);
    end Pathify;
 
@@ -1734,7 +1736,7 @@ package body xia_parser_Model is
       Literal_Value : Expression_Values(As_Expr_Text);
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Processing_Instruction_Part.Token_String.all;
+      Value.S := This.Processing_Instruction_Part.Token_String;
       Evaluate(This.Literal_Part.all, Context_Node, Literal_Value);
       Append(Value.S, "(" & Literal_Value.S & ")");
    end Evaluate;
@@ -1748,7 +1750,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Comment_Part.Token_String.all;
+      Value.S := This.Comment_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1760,7 +1762,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Text_Part.Token_String.all;
+      Value.S := This.Text_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1772,7 +1774,7 @@ package body xia_parser_Model is
                       Value : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Processing_Instruction_Part.Token_String.all;
+      Value.S := This.Processing_Instruction_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1784,7 +1786,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Node_Part.Token_String.all;
+      Value.S := This.Node_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1860,7 +1862,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.NCName_Part.Token_String.all;
+      Value.S := This.NCName_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1896,7 +1898,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.And_Part.Token_String.all;
+      Value.S := This.And_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1908,7 +1910,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Or_Part.Token_String.all;
+      Value.S := This.Or_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1920,7 +1922,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Mod_Part.Token_String.all;
+      Value.S := This.Mod_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -1932,7 +1934,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Div_Part.Token_String.all;
+      Value.S := This.Div_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -2109,7 +2111,7 @@ package body xia_parser_Model is
    procedure Evaluate (This         : in     Function_Call_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
-      Function_Name : String_Ptr;
+      Function_Name : Unbounded_String;
 
       Args : Argument_List := Evaluate_Arguments(This.Arguments_Part, Context_Node);
    begin
@@ -2119,7 +2121,7 @@ package body xia_parser_Model is
         (Qname_Nonterminal1(This.Function_Name_Part.Qname_Part.all).NCName_Or_ID_Part.all).
         NCName_Part.Token_String;
 
-      Evaluate_Function(Function_Name, Context_Node, Args, Value);
+      Evaluate_Function(-Function_Name, Context_Node, Args, Value);
    end Evaluate;
 
    -------------
@@ -2665,7 +2667,7 @@ package body xia_parser_Model is
                        Value        :    out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Integer_Part.Token_String.all;
+      Value.S := This.Integer_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -2677,7 +2679,7 @@ package body xia_parser_Model is
                       Value : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.Decimal_Literal_Part.Token_String.all;
+      Value.S := This.Decimal_Literal_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -2689,7 +2691,7 @@ package body xia_parser_Model is
                       Value : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.DQ_Literal_Part.Token_String.all;
+      Value.S := This.DQ_Literal_Part.Token_String;
    end Evaluate;
 
    -------------
@@ -2701,7 +2703,7 @@ package body xia_parser_Model is
                       Value : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
-      Value.S := +This.SQ_Literal_Part.Token_String.all;
+      Value.S := This.SQ_Literal_Part.Token_String;
    end Evaluate;
 
    ----------------------------------------------------------
