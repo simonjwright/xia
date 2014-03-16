@@ -1,0 +1,5 @@
+This directory contains the subset of Booch components necessary to
+compile and run XPath in Ada (XIA).
+
+The complete set of Booch components is maintained by Simon Wright and
+is available at http://www.pogner.demon.co.uk/components/bc.
