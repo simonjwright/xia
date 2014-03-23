@@ -1,0 +1,29 @@
+with "../../../../opt/gnat-gpl/lib/gnat/xmlada.gpr";
+
+project Xia1 is
+
+   for Source_Dirs use ("src/**", "test");
+   for Object_Dir use "obj/";
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g");
+   end Builder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-g");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-g");
+   end Binder;
+
+   for Exec_Dir use "test/";
+
+   package Ide is
+      for Documentation_Dir use "doc/";
+   end Ide;
+
+   for Main use ("test_xpath.adb");
+
+end Xia1;
+
