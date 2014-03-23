@@ -28,6 +28,8 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Ada.Strings.Unbounded;
+use Ada.Strings.Unbounded;
 with Bc.Containers.Collections.Unbounded;
 with Bc.Containers.Sets.Unbounded;
 with Bc.Containers.Trees.Avl;
@@ -38,8 +40,6 @@ use  Dom.Core;
 
 with Mckae.XML.XPath.Locations;
 use  Mckae.XML.XPath.Locations;
-with Mckae.Space.Unbounded_String_Expandable;
-use  Mckae.Space.Unbounded_String_Expandable;
 
 package Mckae.XML.XPath.Node_Sets is
 
@@ -97,7 +97,7 @@ package Mckae.XML.XPath.Node_Sets is
    -------------------------------------------------------------------
 
    type Sortable_Matches is record
-      Key          : Expandable_String;
+      Key          : Unbounded_String;
       Matched_Node : Node;
    end record;
 
