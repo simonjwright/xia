@@ -37,7 +37,6 @@ with Dom.Core.Append_Node;
 --with Dom.Core.Attrs;
 with Dom.Core.Nodes;
 
-with Mckae.Space.Unbounded_String_Expandable;
 with Mckae.Xml.Xpath.Locations;
 use  Mckae.Xml.Xpath.Locations;
 with Mckae.Xml.Xpath.Node_Sets;
@@ -53,7 +52,6 @@ package body Mckae.XML.XPath.XIA_Worker is
    use Ada.Strings;
    use Dom.Core;
    use Dom.Core.Nodes;
-   use Mckae.Space.Unbounded_String_Expandable;
 
    -------------------------------------------------------------------
 
@@ -631,7 +629,7 @@ package body Mckae.XML.XPath.XIA_Worker is
 
       Current       : Node_Sets.Current_Matchings;
       Node_Sorter   : Node_Sets.Sortable_Matches;
-      Node_Key      : Expandable_String;
+      Node_Key      : Unbounded_String;
       Not_Found     : Boolean;
 
       Empty_Node_List : Node_List;
@@ -658,7 +656,7 @@ package body Mckae.XML.XPath.XIA_Worker is
          end if;
 
          Node_Sorter.Matched_Node := Matching_Node;
-         Clear(Node_Sorter.Key);
+         Node_Sorter.Key := Null_Unbounded_String;
 
          Create_Node_Key(Node_Sorter);
 
@@ -675,7 +673,7 @@ package body Mckae.XML.XPath.XIA_Worker is
             Matching_Node := Current.Matching_Node;
          end if;
 
-         Copy(Node_Key, Node_Sorter.Key);
+         Node_Key := Node_Sorter.Key;
 
          Insert(Sorting_Tree, (Node_Key, Matching_Node), Not_Found);
          pragma Assert(Not_Found);
