@@ -28,6 +28,7 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Ada.Containers.Vectors;
 with Ada.Strings.Unbounded;
 with Mckae.XML.XPath.Predicates;
 with Unicode.CES;
@@ -110,16 +111,18 @@ package Mckae.XML.XPath.Locations is
    end record;
 
    -- A sequence of location steps
-   type Location_Path_Steps is array (Natural range <>) of Location_Steps;
-   type Location_Path_Steps_Handle is access Location_Path_Steps;
+   subtype Step_Indices is Ada.Containers.Count_Type
+     range 1 .. Ada.Containers.Count_Type'Last;
+   package Location_Steps_Management is new
+     Ada.Containers.Vectors(Step_Indices, Location_Steps);
+   subtype Location_Path_Steps_Handle is Location_Steps_Management.Vector;
 
    type Location_Paths is
       record
          Absolute : Boolean;
-         Steps    : Natural := 0;
-         Path     : Location_Path_Steps_Handle := new Location_Path_Steps(1 .. 10);
+         Steps    : Ada.Containers.Count_Type := 0;
+         Path     : Location_Path_Steps_Handle;
       end record;
-
    -- Redefinition of strings to be compatible with the DOM interface
    subtype Xpath_String is Unicode.CES.Byte_Sequence;
 

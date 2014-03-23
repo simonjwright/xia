@@ -42,30 +42,22 @@ package body Mckae.XML.XPath.Locations is
 
    -------------------------------------------------------------------
 
-   procedure Free is new
-     Unchecked_Deallocation(Location_Path_Steps,
-                            Location_Path_Steps_Handle);
+--     procedure Free is new
+--       Unchecked_Deallocation(Location_Path_Steps,
+--                              Location_Path_Steps_Handle);
 
    -------------------------------------------------------------------
 
    procedure Add (Location_Step : in     Location_Steps;
                   Location_Path : in out Location_Paths) is
 
-      Curr_Path : Location_Path_Steps_Handle := Location_Path.Path;
-      Steps     : Natural renames Location_Path.Steps;
+      use type Step_Indices;
 
    begin
       pragma Debug(Put_Line("Adding: " & To_String(Location_Step.Node_Test.Name)));
 
-      if Location_Path.Steps = Location_Path.Path'Length then
-         -- Reallocate a larger path
-         Location_Path.Path := new Location_Path_Steps(1 .. Steps * 2);
-         Location_Path.Path(Curr_Path'Range) := Curr_Path.all;
-         Free(Curr_Path);
-      end if;
-
-      Steps := Steps + 1;
-      Location_Path.Path(Steps) := Location_Step;
+      Location_Path.Steps := Location_Path.Steps + 1;
+      Location_Path.Path.Append (Location_Step);
    end Add;
 
    -------------------------------------------------------------------
@@ -78,13 +70,15 @@ package body Mckae.XML.XPath.Locations is
 
    -------------------------------------------------------------------
 
-   procedure Free(Location_Path : in out Location_Paths) is
+   procedure Free (Location_Path : in out Location_Paths) is
+      Step : Location_Steps;
    begin
-      for P in Location_Path.Path'Range loop
-         Predicates.Release(Location_Path.Path(P).Location_Predicates);
+      for P in 1 .. Location_Path.Path.Length loop
+         Step := Location_Path.Path.Element(P);
+         Predicates.Release (Step.Location_Predicates);
+         Location_Path.Path.Replace_Element(P, Step);
       end loop;
-      Free(Location_Path.Path);
-      Location_Path.Path  := null;
+      Location_Path.Path.Clear;
    end Free;
 
    -------------------------------------------------------------------
@@ -103,7 +97,7 @@ package body Mckae.XML.XPath.Locations is
       Parsing_Path :=
         (Steps    => 0,
          Absolute => False,
-         Path     => new Location_Path_Steps(1 .. 10));
+         Path     => <>);
    end Reset_For_Parsing;
 
 end Mckae.XML.XPath.Locations;

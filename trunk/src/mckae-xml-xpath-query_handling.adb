@@ -46,6 +46,7 @@ package body Mckae.XML.XPath.Query_Handling is
 --        Parse_Tree : Xia_Parser_model.Parseable_ptr;
 
       Path : Locations.Location_Paths;
+      Step : Locations.Location_Steps;
 
    begin
       xia_parser_parser.run(Xpath_Query);
@@ -55,8 +56,10 @@ package body Mckae.XML.XPath.Query_Handling is
 
       Path := Locations.Get_Path;
 
-      Path.Absolute := Xpath_Query(Xpath_Query'First) = '/';
-      Path.Path (Path.Steps).Output_Step := True;
+      Path.Absolute := Xpath_Query (Xpath_Query'First) = '/';
+      Step := Path.Path.Element (Path.Steps);
+      Step.Output_Step := True;
+      Path.Path.Replace_Element (Path.Steps, Step);
 
       return Path;
 
