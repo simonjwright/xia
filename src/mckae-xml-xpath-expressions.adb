@@ -39,7 +39,7 @@ with Dom.Core.Documents;
 with Dom.Core.Nodes;
 use  Dom.Core.Nodes;
 with Dom.Core.Append_Node;
-with Mckae.XML.XPath.XIA;
+with Mckae.XML.XPath.XIA_Worker;
 
 package body Mckae.XML.XPath.Expressions is
 
@@ -766,7 +766,7 @@ package body Mckae.XML.XPath.Expressions is
       Result      : Boolean := False;
 
    begin
-      Node_Set := XIA.Xpath_Query(Context_Node.N, Lang_Query);
+      Node_Set := XIA_Worker.Xpath_Query(Context_Node.N, Lang_Query);
 
       if Length(Node_Set) > 0 then
          declare
@@ -1097,10 +1097,10 @@ package body Mckae.XML.XPath.Expressions is
             return Node_Value(N);
 
          when Element_Node =>
-            Node_Set := XIA.Xpath_Query(N, "./text()");
+            Node_Set := XIA_Worker.Xpath_Query(N, "./text()");
 
          when Document_Node =>
-            Node_Set := XIA.Xpath_Query(N, "//text()");
+            Node_Set := XIA_Worker.Xpath_Query(N, "//text()");
 
          when others =>
             null;

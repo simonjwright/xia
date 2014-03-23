@@ -43,7 +43,7 @@ package body Mckae.XML.XPath.Query_Handling is
                     -- The XPath query to decode
                    ) return Locations.Location_Paths is
 
-      Parse_Tree : Xia_Parser_model.Parseable_ptr;
+--        Parse_Tree : Xia_Parser_model.Parseable_ptr;
 
       Path : Locations.Location_Paths;
 
@@ -56,7 +56,7 @@ package body Mckae.XML.XPath.Query_Handling is
       Path := Locations.Get_Path;
 
       Path.Absolute := Xpath_Query(Xpath_Query'First) = '/';
-      Path.Path(Path.Steps).Output_Step := True;
+      Path.Path (Path.Steps).Output_Step := True;
 
       return Path;
 
