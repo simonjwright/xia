@@ -29,6 +29,7 @@
 ------------------------------------------------------------------------
 
 with Mckae.XML.XPath.Locations;
+with Xia_Parser_Model;
 
 package Mckae.XML.XPath.Query_Handling is
 
@@ -47,5 +48,7 @@ package Mckae.XML.XPath.Query_Handling is
 
    -- Exception raised when the query does not conform to XPath syntax
    Malformed_Query : exception;
+
+   Parse_Tree : Xia_Parser_Model.Parseable_Ptr;
 
 end Mckae.XML.XPath.Query_Handling;

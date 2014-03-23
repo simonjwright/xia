@@ -38,7 +38,7 @@ with Dom.Core.Nodes;
 with McKae.XML.XPath.Expressions;
 with Mckae.XML.XPath.Locations;
 with Mckae.XML.XPath.Predicates;
-with Mckae.XML.XPath.Xia;
+with Mckae.XML.XPath.Xia_Worker;
 
 with Text_IO; use Text_IO;
 
@@ -1299,7 +1299,7 @@ package body xia_parser_Model is
 
    procedure Evaluate (This : in Parseable_Token;
                        Context_Node : in     Node_Items;
-                       Value : out Expression_Values) is
+                       Value        : out Expression_Values) is
    begin
       Put_Line("Evaluating Token: " & " Parseable_Token");
       Value := (As_Boolean, True);
@@ -1309,14 +1309,14 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Location_Path_Nonterminal1;
+   procedure Evaluate (This         : in  Location_Path_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Predicate_Path_Nodes : Dom.Core.Node_List;
    begin
       Value := (As_Expr_Text, Null_Unbounded_String);
       Evaluate(This.Relative_Location_Path_Part.all, Context_Node, Value);
-      Predicate_Path_Nodes := Xia.Xpath_Query(Context_Node.N, To_String(Value.S));
+      Predicate_Path_Nodes := Xia_Worker.Xpath_Query(Context_Node.N, To_String(Value.S));
       Value := (As_Node_List, Predicate_Path_Nodes);
    end Evaluate;
 
@@ -1324,14 +1324,14 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Location_Path_Nonterminal2;
+   procedure Evaluate (This         : in  Location_Path_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Predicate_Path_Nodes : Dom.Core.Node_List;
    begin
       Value := (As_Expr_Text, Null_Unbounded_String);
       Evaluate(This.Absolute_Location_Path_Part.all, Context_Node, Value);
-      Predicate_Path_Nodes := Xia.Xpath_Query(Context_Node.N, To_String(Value.S));
+      Predicate_Path_Nodes := Xia_Worker.Xpath_Query(Context_Node.N, To_String(Value.S));
       Value := (As_Node_List, Predicate_Path_Nodes);
    end Evaluate;
 
@@ -1339,7 +1339,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relative_Location_Path_Nonterminal2;
+   procedure Evaluate (This         : in  Relative_Location_Path_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Step_Value : Expression_Values(As_Expr_Text);
@@ -1354,9 +1354,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Absolute_Location_Path_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Absolute_Location_Path_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"/";
@@ -1366,9 +1366,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Absolute_Location_Path_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Absolute_Location_Path_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Relative_Location_Path_Part.all, Context_Node, Value);
@@ -1379,9 +1379,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Absolute_Location_Path_Nonterminal3;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Absolute_Location_Path_Nonterminal3;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Abbreviated_Absolute_Location_Path_Part.all, Context_Node, Value);
@@ -1391,9 +1391,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relative_Location_Path_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Relative_Location_Path_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Step_Part.all, Context_Node, Value);
@@ -1403,9 +1403,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relative_Location_Path_Nonterminal3;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Relative_Location_Path_Nonterminal3;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Abbreviated_Relative_Location_Path_Part.all, Context_Node, Value);
@@ -1415,9 +1415,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Step_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Step_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
       Predicate_Value : Expression_Values(As_Expr_Text);
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
@@ -1430,9 +1430,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Step_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Step_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Abbreviated_Step_Part.all, Context_Node, Value);
@@ -1442,9 +1442,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Predicates_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Predicates_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
       pragma Warnings(Off, Value);
    begin
       -- There is no predicate.
@@ -1456,9 +1456,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Predicates_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Predicates_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
       Predicate_Value : Expression_Values(As_Expr_Text);
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
@@ -1471,9 +1471,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Step_Base_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Step_Base_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
       Node_Test_Value : Expression_Values(As_Expr_Text);
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
@@ -1486,9 +1486,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Step_Base_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Step_Base_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Abbreviated_Step_Base_Part.all, Context_Node, Value);
@@ -1498,9 +1498,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Abbreviated_Step_Base_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Abbreviated_Step_Base_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Node_Test_Part.all, Context_Node, Value);
@@ -1510,9 +1510,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Abbreviated_Step_Base_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Abbreviated_Step_Base_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Node_Test_Part.all, Context_Node, Value);
@@ -1524,8 +1524,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Predicate_Nonterminal;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Predicate_Expr_Part.all, Context_Node, Value);
@@ -1536,9 +1536,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Axis_Specifier_Nonterminal;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Axis_Specifier_Nonterminal;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Axis_Name_Part.all, Context_Node, Value);
@@ -1550,8 +1550,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"ancestor";
@@ -1562,8 +1562,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"ancestor-or-self";
@@ -1574,8 +1574,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal3;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"attribute";
@@ -1586,8 +1586,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal4;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"child";
@@ -1598,8 +1598,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal5;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"descendant";
@@ -1610,8 +1610,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal6;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"descendant-or-self";
@@ -1622,8 +1622,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal7;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"following";
@@ -1634,8 +1634,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal8;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"following-sibling";
@@ -1646,8 +1646,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal9;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"namespace";
@@ -1658,8 +1658,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal10;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"parent";
@@ -1670,8 +1670,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal11;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"preceding";
@@ -1682,8 +1682,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal12;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"preceding-sibling";
@@ -1694,8 +1694,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Axis_Name_Nonterminal13;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"self";
@@ -1705,9 +1705,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Test_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Test_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Name_Test_Part.all, Context_Node, Value);
@@ -1717,9 +1717,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Test_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Test_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Evaluate(This.Node_Type_Part.all, Context_Node, Value);
@@ -1730,9 +1730,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Test_Nonterminal3;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Test_Nonterminal3;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
       Literal_Value : Expression_Values(As_Expr_Text);
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
@@ -1745,9 +1745,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Type_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Type_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := This.Comment_Part.Token_String;
@@ -1757,9 +1757,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Type_Nonterminal2;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Type_Nonterminal2;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := This.Text_Part.Token_String;
@@ -1770,8 +1770,8 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate (This : in Node_Type_Nonterminal3;
-                       Context_Node : in     Node_Items;
-                      Value : out Expression_Values) is
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := This.Processing_Instruction_Part.Token_String;
@@ -1781,9 +1781,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Node_Type_Nonterminal4;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Node_Type_Nonterminal4;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := This.Node_Part.Token_String;
@@ -1793,9 +1793,9 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Name_Test_Nonterminal1;
-                       Context_Node : in     Node_Items;
-                       Value        :    out Expression_Values) is
+   procedure Evaluate (This : in Name_Test_Nonterminal1;
+                      Context_Node : in     Node_Items;
+                       Value        : out Expression_Values) is
    begin
       pragma Assert(Value.Value_Type = As_Expr_Text);
       Value.S := +"*";
@@ -1817,7 +1817,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Name_Test_Nonterminal3;
+   procedure Evaluate (This : in  Name_Test_Nonterminal3;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -1842,7 +1842,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     QName_Nonterminal2;
+   procedure Evaluate (This         : in          QName_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Part2_Value : Expression_Values(As_Expr_Text);
@@ -1857,7 +1857,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal1;
+   procedure Evaluate (This         : in          NCNAME_Or_ID_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1869,7 +1869,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal2;
+   procedure Evaluate (This         : in          NCNAME_Or_ID_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1881,7 +1881,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal3;
+   procedure Evaluate (This         : in          NCNAME_Or_ID_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1893,7 +1893,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal4;
+   procedure Evaluate (This         : in          NCNAME_Or_ID_Nonterminal4;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1905,7 +1905,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal5;
+   procedure Evaluate (This         : in          NCNAME_Or_ID_Nonterminal5;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1917,7 +1917,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal6;
+   procedure Evaluate (This         : in       NCNAME_Or_ID_Nonterminal6;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1929,7 +1929,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     NCNAME_Or_ID_Nonterminal7;
+   procedure Evaluate (This         : in       NCNAME_Or_ID_Nonterminal7;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -1941,7 +1941,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Predicate_Expr_Nonterminal;
+   procedure Evaluate (This         : in       Predicate_Expr_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
 
@@ -1969,7 +1969,7 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate
-     (This         : in     Abbreviated_Absolute_Location_Path_Nonterminal;
+     (This         : in       Abbreviated_Absolute_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
       Value        :    out Expression_Values) is
    begin
@@ -1983,7 +1983,7 @@ package body xia_parser_Model is
    -------------
 
    procedure Evaluate
-     (This         : in     Abbreviated_Relative_Location_Path_Nonterminal;
+     (This         : in       Abbreviated_Relative_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
       Value        :    out Expression_Values)
    is
@@ -1999,7 +1999,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-             procedure Evaluate (This         : in     Abbreviated_Step_Nonterminal1;
+             procedure Evaluate (This         : in       Abbreviated_Step_Nonterminal1;
                                  Context_Node : in     Node_Items;
                                  Value        :    out Expression_Values) is
    begin
@@ -2011,7 +2011,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Abbreviated_Step_Nonterminal2;
+   procedure Evaluate (This : in       Abbreviated_Step_Nonterminal2;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2023,7 +2023,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Expr_Nonterminal;
+   procedure Evaluate (This         : in       Expr_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2034,7 +2034,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Primary_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Primary_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2046,7 +2046,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Primary_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Primary_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2057,7 +2057,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Primary_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Primary_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2069,7 +2069,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Primary_Expr_Nonterminal4;
+   procedure Evaluate (This         : in       Primary_Expr_Nonterminal4;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Float_Value : Long_Float;
@@ -2085,7 +2085,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Primary_Expr_Nonterminal5;
+   procedure Evaluate (This         : in       Primary_Expr_Nonterminal5;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2096,7 +2096,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Variable_Reference_Nonterminal;
+   procedure Evaluate (This         : in       Variable_Reference_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2108,7 +2108,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Function_Call_Nonterminal;
+   procedure Evaluate (This         : in       Function_Call_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Function_Name : Unbounded_String;
@@ -2128,7 +2128,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Arguments_Nonterminal1;
+   procedure Evaluate (This : in       Arguments_Nonterminal1;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2140,7 +2140,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Arguments_Nonterminal2;
+   procedure Evaluate (This : in       Arguments_Nonterminal2;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2152,7 +2152,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Arguments_Nonterminal3;
+   procedure Evaluate (This         : in       Arguments_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2164,7 +2164,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Argument_Nonterminal;
+   procedure Evaluate (This         : in       Argument_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2175,7 +2175,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Function_Name_Nonterminal;
+   procedure Evaluate (This         : in       Function_Name_Nonterminal;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2187,7 +2187,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Union_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Union_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2198,7 +2198,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Union_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Union_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2228,7 +2228,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Path_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Path_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2239,7 +2239,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Path_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Path_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2250,7 +2250,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Path_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Path_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2262,7 +2262,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Path_Expr_Nonterminal4;
+   procedure Evaluate (This         : in       Path_Expr_Nonterminal4;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2274,7 +2274,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Filter_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Filter_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2285,7 +2285,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Filter_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Filter_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2297,7 +2297,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Or_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Or_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2308,7 +2308,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Or_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Or_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2330,7 +2330,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     And_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       And_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2341,7 +2341,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     And_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       And_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2363,7 +2363,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Equality_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Equality_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2374,7 +2374,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Equality_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Equality_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       -- EQ
@@ -2395,7 +2395,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Equality_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Equality_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       -- NE
@@ -2416,7 +2416,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relational_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Relational_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2427,7 +2427,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relational_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Relational_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2447,7 +2447,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relational_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Relational_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2467,7 +2467,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Relational_Expr_Nonterminal4;
+   procedure Evaluate (This : in       Relational_Expr_Nonterminal4;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2487,7 +2487,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Relational_Expr_Nonterminal5;
+   procedure Evaluate (This         : in       Relational_Expr_Nonterminal5;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2507,7 +2507,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Additive_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Additive_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2518,7 +2518,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Additive_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Additive_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2539,7 +2539,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Additive_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Additive_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2560,7 +2560,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Multiplicative_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Multiplicative_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2571,7 +2571,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Multiplicative_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Multiplicative_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2592,7 +2592,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Multiplicative_Expr_Nonterminal3;
+   procedure Evaluate (This         : in       Multiplicative_Expr_Nonterminal3;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2613,7 +2613,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Multiplicative_Expr_Nonterminal4;
+   procedure Evaluate (This         : in       Multiplicative_Expr_Nonterminal4;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
       Op1, Op2 : Expression_Values;
@@ -2634,7 +2634,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Unary_Expr_Nonterminal1;
+   procedure Evaluate (This         : in       Unary_Expr_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2645,7 +2645,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Unary_Expr_Nonterminal2;
+   procedure Evaluate (This         : in       Unary_Expr_Nonterminal2;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2662,7 +2662,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This         : in     Number_Nonterminal1;
+   procedure Evaluate (This         : in       Number_Nonterminal1;
                        Context_Node : in     Node_Items;
                        Value        :    out Expression_Values) is
    begin
@@ -2674,7 +2674,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Number_Nonterminal2;
+   procedure Evaluate (This : in       Number_Nonterminal2;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2686,7 +2686,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Literal_Nonterminal1;
+   procedure Evaluate (This : in       Literal_Nonterminal1;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2698,7 +2698,7 @@ package body xia_parser_Model is
    -- Evaluate --
    -------------
 
-   procedure Evaluate (This : in Literal_Nonterminal2;
+   procedure Evaluate (This : in       Literal_Nonterminal2;
                        Context_Node : in     Node_Items;
                       Value : out Expression_Values) is
    begin
@@ -2707,6 +2707,1086 @@ package body xia_parser_Model is
    end Evaluate;
 
    ----------------------------------------------------------
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Parseable_Token) is
+   begin
+      null;
+   end Release;
+
+   ----------------------------------------------------------
+   --
+   -- These three Release procedures are the only ones through which
+   --  the parse tree release will commence; two for different forms
+   --  of relative paths, and one for absolute paths.  The working
+   --  step definition is cleared, filled out by invoking the parse
+   --  tree, and then added to the processed location path.
+
+   procedure Release (This : in out Location_Path_nonterminal1) is
+   begin
+      Release (This.Relative_Location_Path_Part.all);
+      Free (This.Relative_Location_Path_Part);
+   end Release;
+
+   procedure Release (This : in out Location_Path_nonterminal2) is
+   begin
+      Release (This.Absolute_Location_Path_Part.all);
+      Free (This.Absolute_Location_Path_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Absolute_Location_Path_nonterminal1) is
+   begin
+      Free(This.SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Absolute_Location_Path_nonterminal2) is
+   begin
+      Release (This.Relative_Location_Path_Part.all);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Absolute_Location_Path_nonterminal3) is
+   begin
+      Release (This.Abbreviated_Absolute_Location_Path_Part.all);
+      Free (This.Abbreviated_Absolute_Location_Path_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relative_Location_Path_nonterminal1) is
+   begin
+      Release (This.Step_Part.all);
+      Free(This.Step_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relative_Location_Path_Nonterminal2) is
+   begin
+      Release (This.Relative_Location_Path_Part.all);
+      Release (This.Step_Part.all);
+      Free (This.Step_Part);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relative_Location_Path_nonterminal3) is
+   begin
+      Release (This.Abbreviated_Relative_Location_Path_Part.all);
+      Free(This.Abbreviated_Relative_Location_Path_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Step_nonterminal1) is
+   begin
+      Release(This.Step_Base_Part.all);
+      Release (This.Predicates_Part.all);
+      Free (This.Step_Base_Part);
+      Free (This.Predicates_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Step_nonterminal2) is
+   begin
+      Release (This.Abbreviated_Step_Part.all);
+      Free(This.Abbreviated_Step_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Predicates_nonterminal1) is
+   begin
+      null;
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Predicates_nonterminal2) is
+   begin
+      Release(This.Predicates_Part.all);
+      Release (This.Predicate_Part.all);
+      Free (This.Predicates_Part);
+      Free (This.Predicate_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Step_Base_nonterminal1) is
+   begin
+      Release(This.Axis_Specifier_Part.all);
+      Release (This.Node_Test_Part.all);
+      Free (This.Axis_Specifier_Part);
+      Free (This.Node_Test_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Step_Base_nonterminal2) is
+   begin
+      Release(This.Abbreviated_Step_Base_Part.all);
+      Free(This.Abbreviated_Step_Base_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Abbreviated_Step_Base_nonterminal1) is
+   begin
+      Release(This.Node_Test_Part.all);
+      Free(This.Node_Test_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Abbreviated_Step_Base_nonterminal2) is
+   begin
+      Release(This.Node_Test_Part.all);
+      Free (This.Node_Test_Part);
+      Free(This.AT_SIGN_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Predicate_nonterminal) is
+   begin
+      Release (This.Predicate_Expr_Part.all);
+      Free (This.Predicate_Expr_Part);
+      Free (This.L_BRACKET_Part);
+      Free (This.R_BRACKET_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Specifier_nonterminal) is
+   begin
+      Release (This.Axis_Name_Part.all);
+      Free (This.Axis_Name_Part);
+      Free (This.DOUBLE_COLON_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal1) is
+   begin
+      Free(This.ANCESTOR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal2) is
+   begin
+      Free(This.ANCESTOR_OR_SELF_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal3) is
+   begin
+      Free(This.ATTRIBUTE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal4) is
+   begin
+      Free (This.CHILD_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal5) is
+   begin
+      Free (This.DESCENDANT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal6) is
+   begin
+      Free (This.DESCENDANT_OR_SELF_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal7) is
+   begin
+      Free (This.FOLLOWING_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal8) is
+   begin
+      Free (This.FOLLOWING_SIBLING_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal9) is
+   begin
+      Free (This.NAMESPACE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal10) is
+   begin
+      Free (This.PARENT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal11) is
+   begin
+      Free (This.PRECEDING_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal12) is
+   begin
+      Free (This.PRECEDING_SIBLING_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Axis_Name_nonterminal13) is
+   begin
+      Free (This.SELF_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Test_nonterminal1) is
+   begin
+      Release (This.Name_Test_Part.all);
+      Free(This.Name_Test_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Test_nonterminal2) is
+   begin
+      Release (This.Node_Type_Part.all);
+      Free (This.Node_Type_Part);
+      Free (This.L_PAREN_Part);
+      Free (This.R_PAREN_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Test_nonterminal3) is
+   begin
+      Release (This.LITERAL_Part.all);
+      Free(This.LITERAL_Part);
+      Free (This.L_PAREN_Part);
+      Free (This.R_PAREN_Part);
+      Free (This.PROCESSING_INSTRUCTION_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Type_nonterminal1) is
+   begin
+      Free(This.COMMENT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Type_nonterminal2) is
+   begin
+      Free(This.TEXT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Type_nonterminal3) is
+   begin
+      Free(This.PROCESSING_INSTRUCTION_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Node_Type_nonterminal4) is
+   begin
+      Free(This.NODE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Name_Test_nonterminal1) is
+   begin
+      Free(This.STAR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Name_Test_nonterminal2) is
+   begin
+      Release (This.Qname_Part.all);
+      Free(This.QName_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Name_Test_nonterminal3) is
+   begin
+      Release (This.NCName_Or_ID_Part.all);
+      Free (This.NCNAME_Or_ID_Part);
+      Free (This.COLON_Part);
+      Free (This.STAR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out QName_nonterminal1) is
+   begin
+      Release (This.NCName_Or_ID_Part.all);
+      Free(This.NCNAME_Or_ID_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out QName_nonterminal2) is
+   begin
+      Release (This.NCNAME_Or_ID_Part1.all);
+      Release (This.NCNAME_Or_ID_Part2.all);
+      Free (This.NCNAME_Or_ID_Part1);
+      Free (This.NCNAME_Or_ID_Part2);
+      Free (This.COLON_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal1) is
+   begin
+      Free(This.NCNAME_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal2) is
+   begin
+      Release (This.Axis_Name_Part.all);
+      Free(This.Axis_Name_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal3) is
+   begin
+      Release (This.Node_Type_Part.all);
+      Free(This.Node_Type_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal4) is
+   begin
+      Free(This.AND_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal5) is
+   begin
+      Free(This.OR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal6) is
+   begin
+      Free(This.MOD_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release(This : in out NCNAME_Or_ID_nonterminal7) is
+   begin
+      Free(This.DIV_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Predicate_Expr_nonterminal) is
+   begin
+      Release (This.Expr_Part.all);
+      Free(This.Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release
+     (This : in out Abbreviated_Absolute_Location_Path_nonterminal)
+   is
+   begin
+      Release (This.Relative_Location_Path_Part.all);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.DOUBLE_SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release
+     (This : in out Abbreviated_Relative_Location_Path_nonterminal)
+   is
+   begin
+      Release(This.Relative_Location_Path_Part.all);
+      Release (This.Step_Part.all);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.Step_Part);
+      Free (This.DOUBLE_SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Abbreviated_Step_nonterminal1) is
+   begin
+      Free(This.DOT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Abbreviated_Step_Nonterminal2) is
+   begin
+      Free(This.DOUBLE_DOT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Expr_nonterminal) is
+   begin
+      Release (This.Or_Expr_Part.all);
+      Free(This.Or_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Primary_Expr_nonterminal1) is
+   begin
+      Release (This.Variable_Reference_Part.all);
+      Free(This.Variable_Reference_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Primary_Expr_nonterminal2) is
+   begin
+      Release (This.Expr_Part.all);
+      Free (This.Expr_Part);
+      Free (This.L_PAREN_Part);
+      Free (This.R_PAREN_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Primary_Expr_nonterminal3) is
+   begin
+      Release (This.LITERAL_Part.all);
+      Free(This.LITERAL_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Primary_Expr_nonterminal4) is
+   begin
+      Release (This.Number_Part.all);
+      Free(This.Number_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Primary_Expr_nonterminal5) is
+   begin
+      Release (This.Function_Call_Part.all);
+      Free(This.Function_Call_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Variable_Reference_nonterminal) is
+   begin
+      Release (This.QName_Part.all);
+      Free (This.QName_Part);
+      Free (This.DOLLAR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Function_Call_nonterminal) is
+   begin
+      Release (This.Function_Name_Part.all);
+      Release (This.Arguments_Part.all);
+      Free (This.Function_Name_Part);
+      Free (This.Arguments_Part);
+      Free (This.L_PAREN_Part);
+      Free (This.R_PAREN_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Arguments_nonterminal1) is
+   begin
+      null;
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Arguments_nonterminal2) is
+   begin
+      Release (This.Argument_Part.all);
+      Free (This.Argument_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Arguments_nonterminal3) is
+   begin
+      Release (This.Arguments_Part.all);
+      Release (This.Argument_Part.all);
+      Free (This.Arguments_Part);
+      Free (This.Argument_Part);
+      Free (This.COMMA_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Argument_nonterminal) is
+   begin
+      Release (This.Expr_Part.all);
+      Free(This.Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Function_Name_nonterminal) is
+   begin
+      Release (This.QName_Part.all);
+      Free (This.QName_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Union_Expr_nonterminal1) is
+   begin
+      Release (This.Path_Expr_Part.all);
+      Free (This.Path_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Union_Expr_nonterminal2) is
+   begin
+      Release (This.Union_Expr_Part.all);
+      Release (This.Path_Expr_Part.all);
+      Free (This.Union_Expr_Part);
+      Free (This.Path_Expr_Part);
+      Free (This.V_BAR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Path_Expr_nonterminal1) is
+   begin
+      Release (This.Location_Path_Part.all);
+      Free (This.Location_Path_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Path_Expr_nonterminal2) is
+   begin
+      Release (This.Filter_Expr_Part.all);
+      Free (This.Filter_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Path_Expr_nonterminal3) is
+   begin
+      Release (This.Filter_Expr_Part.all);
+      Release (This.Relative_Location_Path_Part.all);
+      Free (This.Filter_Expr_Part);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Path_Expr_nonterminal4) is
+   begin
+      Release (This.Filter_Expr_Part.all);
+      Release (This.Relative_Location_Path_Part.all);
+      Free (This.Filter_Expr_Part);
+      Free (This.Relative_Location_Path_Part);
+      Free (This.DOUBLE_SLASH_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Filter_Expr_nonterminal1) is
+   begin
+      Release (This.Primary_Expr_Part.all);
+      Free (This.Primary_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Filter_Expr_nonterminal2) is
+   begin
+      Release (This.Filter_Expr_Part.all);
+      Release (This.Predicate_Part.all);
+      Free (This.Filter_Expr_Part);
+      Free (This.Predicate_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Or_Expr_nonterminal1) is
+   begin
+      Release (This.And_Expr_Part.all);
+      Free (This.And_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Or_Expr_nonterminal2) is
+   begin
+      Release (This.Or_Expr_Part.all);
+      Release (This.And_Expr_Part.all);
+      Free (This.Or_Expr_Part);
+      Free (This.And_Expr_Part);
+      Free (This.OR_part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out And_Expr_nonterminal1) is
+   begin
+      Release (This.Equality_Expr_Part.all);
+      Free(This.Equality_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out And_Expr_nonterminal2) is
+   begin
+      Release (This.And_Expr_Part.all);
+      Release (This.Equality_Expr_Part.all);
+      Free (This.And_Expr_Part);
+      Free (This.Equality_Expr_Part);
+      Free (This.AND_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Equality_Expr_nonterminal1) is
+   begin
+      Release (This.Relational_Expr_Part.all);
+      Free(This.Relational_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Equality_Expr_nonterminal2) is
+   begin
+      Release (This.Equality_Expr_Part.all);
+      Release (This.Relational_Expr_Part.all);
+      Free (This.Equality_Expr_Part);
+      Free (This.Relational_Expr_Part);
+      Free (This.EQ_part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Equality_Expr_nonterminal3) is
+   begin
+      Release (This.Equality_Expr_Part.all);
+      Release (This.Relational_Expr_Part.all);
+      Free (This.Equality_Expr_Part);
+      Free (This.Relational_Expr_Part);
+      Free (This.NE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relational_Expr_nonterminal1) is
+   begin
+      Release (This.Additive_Expr_Part.all);
+      Free (This.Additive_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relational_Expr_nonterminal2) is
+   begin
+      Release (This.Relational_Expr_Part.all);
+      Release (This.Additive_Expr_Part.all);
+      Free (This.Relational_Expr_Part);
+      Free (This.Additive_Expr_Part);
+      Free (This.LT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relational_Expr_nonterminal3) is
+   begin
+      Release (This.Relational_Expr_Part.all);
+      Release (This.Additive_Expr_Part.all);
+      Free (This.Relational_Expr_Part);
+      Free (This.Additive_Expr_Part);
+      Free (This.GT_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relational_Expr_nonterminal4) is
+   begin
+      Release (This.Relational_Expr_Part.all);
+      Release (This.Additive_Expr_Part.all);
+      Free (This.Relational_Expr_Part);
+      Free (This.Additive_Expr_Part);
+      Free (This.LE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Relational_Expr_nonterminal5) is
+   begin
+      Release (This.Relational_Expr_Part.all);
+      Release (This.Additive_Expr_Part.all);
+      Free (This.Relational_Expr_Part);
+      Free (This.Additive_Expr_Part);
+      Free (This.GE_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Additive_Expr_nonterminal1) is
+   begin
+      Release (This.Multiplicative_Expr_Part.all);
+      Free (This.Multiplicative_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Additive_Expr_nonterminal2) is
+   begin
+      Release (This.Additive_Expr_Part.all);
+      Release (This.Multiplicative_Expr_Part.all);
+      Free (This.Additive_Expr_Part);
+      Free (This.Multiplicative_Expr_Part);
+      Free (This.PLUS_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Additive_Expr_nonterminal3) is
+   begin
+      Release (This.Additive_Expr_Part.all);
+      Release (This.Multiplicative_Expr_Part.all);
+      Free (This.Additive_Expr_Part);
+      Free (This.Multiplicative_Expr_Part);
+      Free (This.MINUS_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Multiplicative_Expr_nonterminal1) is
+   begin
+      Release (This.Unary_Expr_Part.all);
+      Free (This.Unary_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Multiplicative_Expr_nonterminal2) is
+   begin
+      Release (This.Multiplicative_Expr_Part.all);
+      Release (This.Unary_Expr_Part.all);
+      Free (This.Multiplicative_Expr_Part);
+      Free (This.Unary_Expr_Part);
+      Free (This.STAR_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Multiplicative_Expr_nonterminal3) is
+   begin
+      Release (This.Multiplicative_Expr_Part.all);
+      Release (This.Unary_Expr_Part.all);
+      Free (This.Multiplicative_Expr_Part);
+      Free (This.Unary_Expr_Part);
+      Free (This.DIV_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Multiplicative_Expr_nonterminal4) is
+   begin
+      Release (This.Multiplicative_Expr_Part.all);
+      Release (This.Unary_Expr_Part.all);
+      Free (This.Multiplicative_Expr_Part);
+      Free (This.Unary_Expr_Part);
+      Free (This.MOD_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Unary_Expr_nonterminal1) is
+   begin
+      Release (This.Union_Expr_Part.all);
+      Free (This.Union_Expr_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Unary_Expr_nonterminal2) is
+   begin
+      Release (This.Unary_Expr_Part.all);
+      Free (This.Unary_Expr_Part);
+      Free (This.MINUS_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Number_nonterminal1) is
+   begin
+      Free(This.INTEGER_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Number_nonterminal2) is
+   begin
+      Free(This.DECIMAL_LITERAL_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Literal_nonterminal1) is
+   begin
+      Free(This.DQ_LITERAL_Part);
+   end Release;
+
+   -------------
+   -- Release --
+   -------------
+
+   procedure Release (This : in out Literal_nonterminal2) is
+   begin
+      Free(This.SQ_LITERAL_Part);
+   end Release;
 
    function Evaluate_Arguments (Arguments_Part : Arguments_Nonterminal_Ptr;
                                 Context_Node   : Node_Items)
