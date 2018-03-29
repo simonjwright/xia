@@ -1,41 +1,8 @@
-XIA (XPath In Ada) is a native Ada implementation of the XPath 1.0
-specification.  XIA is built atop the DOM component of AdaCore's
-XML/Ada implementation.
+# XIA Version history #
 
-Submitting XPath queries is done via the XPath_Query function in
-package McKae.XML.XPath.XIA.  The function returns a Node_List, as
-defined in DOM.Core, and whose contents can be accessed with the Item
-function in DOM.Core.Nodes;
+Contains history up to version 1.0.0.
 
-A script, txia, and an input file of XPath queries, txia_tests.txt,
-are provided to jam a bunch of queries through the test program (if
-more test queries are added, be sure to leave the empty line at the
-bottom of the file).  txia_tests.txt also exhibits a wide variety of
-XPath queries, although the majority of these are nonsense queries as
-far as realistic usage is concerned, they're tailored to exercise and
-test various aspects of XIA's implementation.
-
-To generate the test program, cd to the test directory and invoke
-gnatmake as follows:
-
-gnatmake -O2 -I.. -I../booch4xia test_xpath `xmlada-config`
-
-
-AdaBrowse generated source code documentation resides in the doc
-subdirectory.
-
-Please let me know if you have any questions or find bugs with the
-current functionality.
-
-Marc A. Criley
-mc@mckae.com
-
-------------------------------------------------------------------
-
-Version history:
-
-XIA v1.00
-=========
+## XIA v1.00 ##
 
 Eliminated the problem with XPath "keywords" being treated as reserved
 words, thanks to some assistance from Dr. Martin Carlisle.  This fix
@@ -45,19 +12,17 @@ selected from XML documents.
 To test the above fix, another simple XML test file was added, whose
 contents consists entirely of XPath keywords.  A number of XPath
 queries against this file are provided for testing.  (See the
-keyword_content.xml and keyword_content_tests.txt files.)
+`keyword_content.xml` and `keyword_content_tests.txt` files.)
 
-XIA v0.61
-=========
+## XIA v0.61 ##
 
 This version corrects one of the known bugs in XIA 0.60--where a
 predicate containing an expression that is a union (|) of node sets
 generated a syntax error.
 
-Additional test cases added txia_tests.txt as well.
+Additional test cases added to `txia_tests.txt` as well.
 
-XIA v0.60
-=========
+## XIA v0.60 ##
 
 This release completes the required functionality for the XML Path
 Language (XPath) Version 1.0.
@@ -71,12 +36,12 @@ generates in a syntax error.
 
 - The axis and node test names are being treated as reserved words,
 hence if the XML document being processed contains elements that have
-those names (e.g., child, ancestor), any XPath queries that refer to
-those elements will be rejected as having a syntax error.
+those names (e.g., `child`, `ancestor`), any XPath queries that refer
+to those elements will be rejected as having a syntax error.
 
-- The id() core library function is implemented, but inoperable.  It
-relies on the XMLAda implementation of Get_Element_By_ID, which is not
-implemented.
+- The `id()` core library function is implemented, but inoperable.  It
+relies on the XMLAda implementation of `Get_Element_By_ID`, which is
+not implemented.
 
 Changes since the last release include fixing some minor bugs and
 completing the implementation of the core library functions.
@@ -89,21 +54,21 @@ subsequent ones was being union'ed to the node set, rather than doing
 additional filtering.
 
 New and completed functions:
+
      id
      lang
      name
      local-name
      namespace-uri
 
-The txia_test.txt file, containg a list of XPath queries that
+The `txia_test.txt` file, containg a list of XPath queries that
 seriously exercise the predicate filtering capabilities of XIA, has
 been updated to 140 queries.  In addition, a test results file,
-txia_results.txt, is now included that shows the expected output from
+`txia_results.txt`, is now included that shows the expected output from
 running the txia test series.
 
 
-XIA v0.50
-=========
+## XIA v0.50 ##
 
 This release implements the handling of path expressions within
 predicates, and adds/completes functions that work with node-sets
@@ -116,26 +81,26 @@ something to play around with.
 Remaining core library functions and capabilites will continue to be
 implemented in subsequent releases.
 
-There is only one known significant bug: The parser treats "and",
-"or", "not", "div", the axis names ("child", "ancestor", etc.), and
-node type names ("text", etc.) as reserved words.  Meaning that if an
+There is only one known significant bug: The parser treats `and`,
+`or`, `not`, `div`, the axis names (`child`, `ancestor`, etc.), and
+node type names (`text`, etc.) as reserved words, meaning that if an
 XML document uses such a term as an element tag, referencing it as
 part of the path in an XPath expression will generate a syntax error.
 
 New and completed functions:
+
      count
      normalize-string
      sum
      translate
 
-The txia_test.txt file, containg a list of XPath queries that
+The `txia_test.txt` file, containg a list of XPath queries that
 seriously exercise the predicate filtering capabilities of XIA, has
-been updated (119 queries and growing!), as has the personal.xml and
-personal.dtd test files.
+been updated (119 queries and growing!), as have the `personal.xml`
+and `personal.dtd` test files.
 
 
-XIA v0.30
-=========
+## XIA v0.30 ##
 
 First release with partial implementation of predicate filtering.
 
@@ -150,6 +115,7 @@ may only support the numeric, boolean, and string arguments.
 Predicate expressions utilizing paths are not yet implemented.
 
 List of core library functions in this release:
+
      boolean
      count
      concat
@@ -172,12 +138,11 @@ List of core library functions in this release:
      true
 
 
-See the txia_test.txt file for a list of XPath queries that seriously
+See the `txia_test.txt` file for a list of XPath queries that seriously
 exercise the predicate filtering capabilities of XIa.
 
 
-XIA v0.20
-=========
+## XIA v0.20 ##
 
 Same thing only better.
 
@@ -199,20 +164,20 @@ Modifications were done to raise an exception in the case of a syntax
 error instead of printing a message, and the IO package was modified
 to get its input from a string rather than a file.
 
-A script, txia, and an input file of XPath queries, txia_tests.txt,
-are provided to jam a bunch of queries through the test program (if
-you add more test queries, be sure to leave the empty line at the
-bottom of the file).
+A script, `txia`, and an input file of XPath queries,
+`txia_tests.txt`, are provided to jam a bunch of queries through the
+test program (if you add more test queries, be sure to leave the empty
+line at the bottom of the file).
 
 The archive now contains the specific Booch components needed to build
 XIA.  You don't need to use the provided subset if you already have
 the components installed (as they're unchanged from the primary
 distribution), but they're provided here as a convenience.
 
-A command line to compile the test program in the xia-0.20/test
+A command line to compile the test program in the `xia-0.20/test`
 directory is:
 
-gnatmake -I.. -I../booch4xia test_xpath `xmlada-config`
+    gnatmake -I.. -I../booch4xia test_xpath `xmlada-config`
 
 Please let me know if you have any questions or find bugs with the
 current functionality.
@@ -220,8 +185,7 @@ current functionality.
 mc@mckae.com
 
 
-XIA v0.10
-=========
+## XIA v0.10 ##
 
 XIA utilizes Ada Core's XML/Ada distribution, and is known to work on
 Linux (RedHat 9) under GNAT 3.15p and GNAT 3.4.2.  There should be no
@@ -229,56 +193,55 @@ Linux-specific dependencies.
 
 There's nothing special about building or incorporating XIA into your
 application.  Simply unpack the archive into a directory and either
-explicitly include (-I) that directory on the command line or add it
-as part of the ADA_INCLUDE_PATH environment variable setting.
+explicitly include (`-I`) that directory on the command line or add it
+as part of the `ADA_INCLUDE_PATH` environment variable setting.
 
 AdaBrowse generated documentation is available in the doc
 subdirectory.
 
-A rudimentary query test program is provided as test_xpath.adb.
+A rudimentary query test program is provided as `test_xpath.adb`.
 Compile it on Linux as:
 
-gnatmake test_xpath `xmlada-config`
+    gnatmake test_xpath `xmlada-config`
 
 You'll be asked for the name of an XML file, and then an XPath query
 string.  Enter your query, and when done use an empty carriage return
-to end the program.  Within Test_XPath, McKae.XML.XPath.XPath_Query is
-invoked with the document's root (document) node and the query and a
-list of nodes (which may be empty) is returned.  The contents of each
-node is displayed--if it's an element node, its first level of
-children are displayed, otherwise the value of the node (such as its
-non-blank text) appears.
+to end the program.  Within `Test_XPath`,
+`McKae.XML.XPath.XPath_Query` is invoked with the document's root
+(document) node and the query and a list of nodes (which may be empty)
+is returned.  The contents of each node is displayed--if it's an
+element node, its first level of children are displayed, otherwise the
+value of the node (such as its non-blank text) appears.
 
 
-A simple XML file is provided, "personal.xml".
+A simple XML file is provided, `personal.xml`.
 
 Here are some queries to try on it:
 
-//@id
+    //@id
 
-Extract all the attribute nodes named "id".
+Extract all the attribute nodes named `id`.
 
-//email
+    //email
 
 Extracts all email nodes.
 
-/personnel/person/link/@subordinates
+    /personnel/person/link/@subordinates
 
-Finds all the "subordinate" attribute nodes associated with the link
+Finds all the `subordinate` attribute nodes associated with the link
 node that corresponds to the given path
 
-//given/parent::*
+    //given/parent::*
 
-Find any parent node of all "given" nodes
+Find any parent node of all `given` nodes
 
-//family/text()
+    //family/text()
 
-Get the text node children that are associated with the family element
-(Note that test_xpath removes any white space from the text before
-displaying it, which if it's all whitespace, leaves nothing to
+Get the text node children that are associated with the `family`
+element (Note that `test_xpath` removes any white space from the text
+before displaying it, which if it's all whitespace, leaves nothing to
 display)
 
-//name/following::email
+    //name/following::email
 
 Find all email nodes that follow a name node
-
