@@ -104,9 +104,18 @@ package McKae.XML.XPath.Expressions is
       Greater_Or_Equal,
       Greater_Than);
 
-
-   -- Relationally compare the two expressions, returning whether or
-   --  not the two expressions have the specified relationship.
+   -- Relationally compare the two expressions, at most one of which
+   --  is required to be a node set.
+   --
+   -- If there is a node set, returns
+   --  an As_Node_Set expression with just those members of the
+   --  original node set that have the specified relationship with the
+   --  other expression.
+   --
+   -- If not, returns an As_Boolean expression indicating the result
+   --  of the comparison.
+   --
+   -- XXX Maybe should think of a better name.
    function Compare
      (Expr1 : Expression_Values;
       -- Comparison operand 1
@@ -116,7 +125,8 @@ package McKae.XML.XPath.Expressions is
 
       Operator : Relational_Operators
       -- The relationship to evaluate between the two expressions
-      ) return Boolean;
+      ) return Expression_Values;
+
 
    -- Basic math computations that can be performed on expressions
    type Computations is

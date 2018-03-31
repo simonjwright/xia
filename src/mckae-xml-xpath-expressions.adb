@@ -259,18 +259,10 @@ package body Mckae.XML.XPath.Expressions is
                Result := Equal;
             end if;
 
-         when As_Node_List =>
-            if Length(E1.NS) < Length(E2.NS) then
-               Result := Lesser;
-            elsif Length(E1.NS) > Length(E2.NS) then
-               Result := Greater;
-            else
-               Result := Equal;
-            end if;
-
-         when As_Expr_Text =>
-            pragma Assert(False);
-            null;
+         when others =>
+            raise Constraint_Error with
+              "Compare given unexpected expression type "
+              & Expr2.Value_Type'Image;
       end case;
 
       return Result;
@@ -310,107 +302,77 @@ package body Mckae.XML.XPath.Expressions is
 
       Operator : Relational_Operators
       -- The relationship to evaluate between the two expressions
-     ) return Boolean is
-
-      Result : Expression_Comparison_Results := Equal;
-
-      E1 : Expression_Values;
-      E2 : Expression_Values;
-
+     ) return Expression_Values
+   is
    begin
-      if (Expr1.Value_Type = As_Node_List) and (Expr2.Value_Type = As_Node_List) then
-         -- Check whether any pair in the expressions' node lists have
-         --  the specified relationship
-         for N1 in 0 .. Length(Expr1.Ns) - 1 loop
-            declare
-               S1 : constant Unbounded_String := +String_Value(Item(Expr1.Ns, N1));
-            begin
-               for N2 in 0 .. Length(Expr2.Ns) - 1 loop
-                  Result := Compare((As_String, S1),
-                                    (As_String,
-                                     +String_Value(Item(Expr2.Ns, N2))));
-                  if Check_Relation(Operator, Result) then
-                     return True;
-                  end if;
-               end loop;
-            end;
-         end loop;
-         return False;
-
-      elsif (Expr1.Value_Type = As_Node_List) then
-         case Expr2.Value_Type is
-            when As_Number =>
-               for N1 in 0 .. Length(Expr1.Ns) - 1 loop
-                  declare
-                     S1 : constant Unbounded_String := +String_Value(Item(Expr1.Ns, N1));
-                  begin
-                     E1 := (As_String, S1);
-                     Coerce(E1, As_Number);
-                     return Check_Relation(Operator, Compare(E1, Expr2));
-                  end;
-               end loop;
-
-            when As_String =>
-               for N1 in 0 .. Length(Expr1.Ns) - 1 loop
-                  declare
-                     S1 : constant Unbounded_String := +String_Value(Item(Expr1.Ns, N1));
-                  begin
-                     E1 := (As_String, S1);
-                     return Check_Relation(Operator, Compare(E1, Expr2));
-                  end;
-               end loop;
-
-            when As_Boolean =>
-               E1 := Expr1;
-               Coerce(E1, As_Boolean);
-               return Check_Relation(Operator, Compare(E1, Expr2));
-
-            when others =>
-               pragma Assert(False);
-               null;
-         end case;
-         return False;
-
-      elsif (Expr2.Value_Type = As_Node_List) then
-         case Expr1.Value_Type is
-            when As_Number =>
-               for N2 in 0 .. Length(Expr2.Ns) - 1 loop
-                  declare
-                     S2 : constant Unbounded_String := +String_Value(Item(Expr2.Ns, N2));
-                  begin
-                     E2 := (As_String, S2);
-                     Coerce(E2, As_Number);
-                     return Check_Relation(Operator, Compare(Expr1, E2));
-                  end;
-               end loop;
-
-            when As_String =>
-               for N2 in 0 .. Length(Expr2.Ns) - 1 loop
-                  declare
-                     S2 : constant Unbounded_String := +String_Value(Item(Expr2.Ns, N2));
-                  begin
-                     E2 := (As_String, S2);
-                     return Check_Relation(Operator, Compare(Expr1, E2));
-                  end;
-               end loop;
-
-            when As_Boolean =>
-               E2 := Expr2;
-               Coerce(E2, As_Boolean);
-               return Check_Relation(Operator, Compare(E1, Expr2));
-
-            when others =>
-               pragma Assert(False);
-               null;
-         end case;
-         return False;
-
-      else
-         Result := Compare(Expr1, Expr2);
-
-         return Check_Relation(Operator, Result);
-
+      if Expr1.Value_Type = As_Node_List
+        and Expr2.Value_Type = As_Node_List
+      then
+         raise Constraint_Error with
+           "Compare requires at most one of its operands "
+           & "to be a Node List: "
+           & Expr1.Value_Type'Image
+           & ", "
+           & Expr2.Value_Type'Image;
       end if;
+
+      --  If one of the expressions is a node list, ensure it's Expr1.
+      if Expr2.Value_Type = As_Node_List then
+         return Compare (Expr2, Expr1, Operator);
+      end if;
+
+      if Expr1.Value_Type = As_Node_List then
+         declare
+            Result : Expression_Values (Value_Type => As_Node_List);
+         begin
+            for J in 0 .. Length (Expr1.Ns) - 1 loop
+               declare
+                  E1 : Expression_Values;
+               begin
+
+                  case Expr2.Value_Type is
+                     when As_Number =>
+                        E1 := (As_String, +String_Value (Item (Expr1.Ns, J)));
+                        Coerce(E1, As_Number);
+                        if Check_Relation (Operator, Compare (E1, Expr2)) then
+                           DOM.Core.Append_Node (Result.Ns, Item (Expr1.Ns, J));
+                        end if;
+
+                     when As_String =>
+                        E1 := (As_String, +String_Value (Item (Expr1.Ns, J)));
+                        if Check_Relation (Operator, Compare (E1, Expr2)) then
+                           DOM.Core.Append_Node (Result.Ns, Item (Expr1.Ns, J));
+                        end if;
+
+                     when As_Boolean =>
+                        E1 := Expr1;
+                        Coerce(E1, As_Boolean);
+                        if Check_Relation (Operator, Compare (E1, Expr2)) then
+                           DOM.Core.Append_Node (Result.Ns, Item (Expr1.Ns, J));
+                        end if;
+
+                     when others =>
+                        raise Constraint_Error with
+                          "Compare given unexpected expression type "
+                          & Expr2.Value_Type'Image;
+
+                  end case;
+               end;
+            end loop;
+
+            return Result;
+
+         end;
+      else
+         declare
+            Comparison_Result : constant Expression_Comparison_Results
+              := Compare (Expr1, Expr2);
+         begin
+            return (As_Boolean,
+                    B => Check_Relation (Operator, Comparison_Result));
+         end;
+      end if;
+
    end Compare;
 
    ----------------------------------------------------------------------

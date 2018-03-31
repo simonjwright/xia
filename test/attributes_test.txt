@@ -1,0 +1,14 @@
+attributes.xml
+# Checking behaviour with selection by attribute name.
+#
+# Checking for specific name: only finds if first in document.
+//class[stereotype/@name='alpha']/@name
+//class[stereotype/@name='beta']/@name
+#
+# Check with 'not': I was expecting it to find only classes without
+# any stereotypes with the given name, it only rejects classes whose
+# first stereotype, if any, has the given name.
+//class[not(stereotype/@name='alpha')]/@name
+//class[not(stereotype/@name='beta')]/@name
+
+^ that blank line ended the tests.

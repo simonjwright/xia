@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE personnel SYSTEM "personal.dtd">
+
+<attributes xml:lang="en">
+
+  <package>
+
+    <!--
+    <class>
+     <stereotype name="omega">
+       <content>not for debug</content>
+     </stereotype>
+      <stereotype name="beta"/>
+      <stereotype name="alpha">
+        <content>for debug</content>
+      </stereotype>
+     <stereotype name="gamma"/>
+     <stereotype name="delta">
+       <content>for debug</content>
+     </stereotype>
+    </class>
+    -->
+    <class name="no_stereotype">
+    </class>
+
+    <class name="first_is_alpha">
+      <stereotype name="alpha"/>
+      <stereotype name="beta"/>
+    </class>
+
+    <class name="first_is_beta">
+      <stereotype name="beta"/>
+      <stereotype name="alpha"/>
+    </class>
+
+    <class name="beta_only">
+      <stereotype name="beta"/>
+    </class>
+
+  </package>
+
+</attributes>

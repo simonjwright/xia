@@ -95,72 +95,74 @@ begin
    Readers.Parse(XML_Source_Reader, File_Source);
    File.Close(File_Source);
 
--- Connect_To_Server;
-
+   -- Connect_To_Server;
+Commands:
    loop
       Put("Enter XPath query: ");
-      Get_Line(S, L);
-      if S(1) /= '#' then -- Skip comment
-         exit when L = 0;
-         New_Line(2);
-         Put_Line("Evaluating: " & S(1..L));
-         New_Line;
-         begin
-            Queried_Nodes := Xpath_Query(Readers.Get_Tree(XML_Source_Reader), S(1..L));
-            Put_Line("Number of nodes:" & Natural'Image(Dom.Core.Nodes.Length(Queried_Nodes)));
+   Skip_Comments:
+      loop
+         Get_Line(S, L);
+         exit Commands when L = 0;
+         exit Skip_Comments when S (1) /= '#';
+      end loop Skip_Comments;
+      New_Line(2);
+      Put_Line("Evaluating: " & S(1..L));
+      New_Line;
+      begin
+         Queried_Nodes := Xpath_Query(Readers.Get_Tree(XML_Source_Reader), S(1..L));
+         Put_Line("Number of nodes:" & Natural'Image(Dom.Core.Nodes.Length(Queried_Nodes)));
 
-            for I in 0 .. Nodes.Length(Queried_Nodes) - 1 loop
-               N := Dom.Core.Nodes.Item(Queried_Nodes, I);
+         for I in 0 .. Nodes.Length(Queried_Nodes) - 1 loop
+            N := Dom.Core.Nodes.Item(Queried_Nodes, I);
 
-               if N.Node_Type = Element_Node then
-                  Put("<");
-                  Put(Nodes.Node_Name(N));
-                  Put(">");
+            if N.Node_Type = Element_Node then
+               Put("<");
+               Put(Nodes.Node_Name(N));
+               Put(">");
 
-                  Children := Nodes.Child_Nodes(N);
-                  Children_Printed := False;
-                  for J in 0 .. Nodes.Length(Children) - 1 loop
-                     Child := Nodes.Item(Children, J);
-                     if Child.Node_Type = Element_Node then
-                        if not Children_Printed then
-                           New_Line;
-                           Children_Printed := True;
-                        end if;
-                        Put("  <");
-                        Put(Nodes.Node_Name(Child));
-                        Put_Line(">");
-                     elsif Child.Node_Type = Text_Node then
-                        if not Children_Printed then
-                           New_Line;
-                           Children_Printed := True;
-                        end if;
-                        Print_Text_Node(Child, Indent => True);
+               Children := Nodes.Child_Nodes(N);
+               Children_Printed := False;
+               for J in 0 .. Nodes.Length(Children) - 1 loop
+                  Child := Nodes.Item(Children, J);
+                  if Child.Node_Type = Element_Node then
+                     if not Children_Printed then
+                        New_Line;
+                        Children_Printed := True;
                      end if;
-                  end loop;
+                     Put("  <");
+                     Put(Nodes.Node_Name(Child));
+                     Put_Line(">");
+                  elsif Child.Node_Type = Text_Node then
+                     if not Children_Printed then
+                        New_Line;
+                        Children_Printed := True;
+                     end if;
+                     Print_Text_Node(Child, Indent => True);
+                  end if;
+               end loop;
 
-                  Put("</");
-                  Put(Nodes.Node_Name(N));
-                  Put_Line(">");
+               Put("</");
+               Put(Nodes.Node_Name(N));
+               Put_Line(">");
 
-               elsif N.Node_Type = Attribute_Node then
-                  Put(Nodes.Node_Name(N) & "=""");
-                  Put(Nodes.Node_Value (N));
-                  Put_Line("""");
+            elsif N.Node_Type = Attribute_Node then
+               Put(Nodes.Node_Name(N) & "=""");
+               Put(Nodes.Node_Value (N));
+               Put_Line("""");
 
-               elsif N.Node_Type = Text_Node then
-                  Print_Text_Node(N);
-               else
-                  Put(Nodes.Node_Value(N));
-               end if;
-            end loop;
+            elsif N.Node_Type = Text_Node then
+               Print_Text_Node(N);
+            else
+               Put(Nodes.Node_Value(N));
+            end if;
+         end loop;
 
-         exception
-            when Malformed_XPath =>
-               Put_Line("Malformed query");
-         end;
-      end if;
-   end loop;
+      exception
+         when Malformed_XPath =>
+            Put_Line("Malformed query");
+      end;
+   end loop Commands;
 
--- Disconnect_From_Server;
+   -- Disconnect_From_Server;
 
 end Test_Xpath;

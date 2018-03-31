@@ -2386,8 +2386,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & "=" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Equal));
+         Value := Expressions.Compare(Op1, Op2, Equal);
       end if;
    end Evaluate;
 
@@ -2407,8 +2406,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & "!=" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Not_Equal));
+         Value := Expressions.Compare(Op1, Op2, Not_Equal);
       end if;
    end Evaluate;
 
@@ -2438,8 +2436,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & "<" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Less_Than));
+         Value := Expressions.Compare(Op1, Op2, Less_Than);
       end if;
    end Evaluate;
 
@@ -2458,8 +2455,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & ">" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Greater_Than));
+         Value := Expressions.Compare(Op1, Op2, Greater_Than);
       end if;
    end Evaluate;
 
@@ -2478,8 +2474,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & "<=" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Less_Or_Equal));
+         Value := Expressions.Compare(Op1, Op2, Less_Or_Equal);
       end if;
    end Evaluate;
 
@@ -2498,8 +2493,7 @@ package body xia_parser_Model is
       if Value.Value_Type = As_Expr_Text then
          Value.S := Op1.S & ">=" & Op2.S;
       else
-         Value := (Value_Type => As_Boolean,
-                   B          => Expressions.Compare(Op1, Op2, Greater_Or_Equal));
+         Value := Expressions.Compare(Op1, Op2, Greater_Or_Equal);
       end if;
    end Evaluate;
 
@@ -3814,4 +3808,3 @@ package body xia_parser_Model is
    ----------------------------------------------------------
 
 end xia_parser_Model;
-

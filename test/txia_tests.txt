@@ -151,3 +151,4 @@ personnel/person/email/preceding::name/given/text()
 //person[contains(concat(string(position()), '23', string(position()), '47'), '34')]/@id
 //person[substring-before(concat(string(position()), '23', string(position()), '47'), '35') = '52']/@id
 
+^ that blank line ended the queries.

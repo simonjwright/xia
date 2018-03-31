@@ -1,3 +1,4 @@
 #!/bin/sh
 ./test_xpath < txia_tests.txt
 ./test_xpath < keyword_content_tests.txt
+./test_xpath < attributes_test.txt
