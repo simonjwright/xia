@@ -2465,3 +2465,32 @@ Number of nodes: 3
   <descendant-or-self>
 </descendant>
 Enter XPath query: 
+Enter XML file name: Enter XPath query: 
+
+Evaluating: //class[stereotype/@name='alpha']/@name
+
+Number of nodes: 2
+name="first_is_alpha"
+name="first_is_beta"
+Enter XPath query: 
+
+Evaluating: //class[stereotype/@name='beta']/@name
+
+Number of nodes: 3
+name="first_is_alpha"
+name="first_is_beta"
+name="beta_only"
+Enter XPath query: 
+
+Evaluating: //class[not(stereotype/@name='alpha')]/@name
+
+Number of nodes: 2
+name="no_stereotype"
+name="beta_only"
+Enter XPath query: 
+
+Evaluating: //class[not(stereotype/@name='beta')]/@name
+
+Number of nodes: 1
+name="no_stereotype"
+Enter XPath query: 

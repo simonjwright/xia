@@ -1,0 +1,5 @@
+.build-static
+.build-relocatable
+lib-static
+lib-relocatable
+*-stamp
