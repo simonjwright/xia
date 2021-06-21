@@ -34,26 +34,20 @@ with Ada.Calendar;
 use Ada.Calendar;
 
 with Dom.Core.Nodes;
-with Mckae.XML.XPath.XIA;
+with XIA;
 with Dom.Readers;
 with Unicode.CES;
 
---  with Dtraq.Client_Transport;
---  use  Dtraq.Client_Transport;
-
-with Mckae.Xml.Xpath.Locations;
-
 with Input_Sources.File;
 
-with Text_IO; use Text_IO;
+with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Bench_Xpath is
 
    use Dom;
    use Dom.Core;
    use Input_Sources;
-   use Mckae.Xml.XPath.Locations;
-   use Mckae.Xml.XPath.XIA;
+   use XIA;
    use Ada.Strings.Fixed;
    use Ada.Strings.Maps;
 
@@ -162,7 +156,7 @@ begin
       Queried_Nodes := Xpath_Query(N, "//person[substring(concat(string(position()), ""23"", string(position()), ""47""), 0 div 0, 3) = """"]/@id");
       Queried_Nodes := Xpath_Query(N, "//person[substring(concat(string(position()), ""23"", string(position()), ""47""), 1.5, 2.6) = '234']/@id");
       Queried_Nodes := Xpath_Query(N, "//person[substring(concat(string(position()), ""23"", string(position()), ""47""), 0, 3) = '52']/@id");
---      Queried_Nodes := Xpath_Query(N, "//person[substring(concat(string(position()), ""23"", string(position()), ""47""), -1 div 0, 1 div 0) = ""]/@id");
+      --  Queried_Nodes := Xpath_Query(N, "//person[substring(concat(string(position()), ""23"", string(position()), ""47""), -1 div 0, 1 div 0) = ""]/@id");
       Queried_Nodes := Xpath_Query(N, "//person[(string-length(string(position())) * position()) = ""4""]/@id");
       Queried_Nodes := Xpath_Query(N, "/descendant-or-self::email/text()");
       Queried_Nodes := Xpath_Query(N, "/descendant-or-self::email[boolean(-3)]/text()");

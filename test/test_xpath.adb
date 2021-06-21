@@ -31,29 +31,22 @@
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
 with Dom.Core.Nodes;
-with Mckae.XML.XPath.XIA;
 with Dom.Readers;
+with Input_Sources.File;
 with Unicode.CES;
 
---  with Dtraq.Client_Transport;
---  use  Dtraq.Client_Transport;
+with XIA;
 
-with Mckae.Xml.Xpath.Locations;
-
-with Input_Sources.File;
-
-with Text_IO; use Text_IO;
+with Ada.Text_IO; use Ada.Text_IO;
 
 procedure Test_Xpath is
 
-   use Dom;
-   use Dom.Core;
-   use Input_Sources;
-   use Mckae.Xml.XPath.Locations;
-   use Mckae.Xml.XPath.XIA;
    use Ada.Strings.Fixed;
    use Ada.Strings.Maps;
-
+   use Dom.Core;
+   use Dom;
+   use Input_Sources;
+   use XIA;
 
    XML_Source_Reader : Dom.Readers.Tree_Reader;
    Queried_Nodes : Node_List;
@@ -70,7 +63,7 @@ procedure Test_Xpath is
 
    procedure Print_Text_Node (T      : Text;
                               Indent : Boolean := False) is
-      White_Space     : constant Xpath_String := ' ' & Ascii.LF & Ascii.CR & ASCII.HT;
+      White_Space     : constant String := ' ' & Ascii.LF & Ascii.CR & ASCII.HT;
       White_Space_Set : constant Character_Set := To_Set(White_Space);
 
       S : Unicode.CES.Byte_Sequence := Trim(Nodes.Node_Value(T),
