@@ -1,5 +1,10 @@
+adabrowse*
+alire
+config
+
 .build-static
 .build-relocatable
 lib-static
 lib-relocatable
+
 *-stamp
