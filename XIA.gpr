@@ -10,12 +10,10 @@ project XIA is
    for Library_Dir use "./lib-" & Library_Type;
 
    --  Defining Library_Interface causes gprbuild to create a
-   --  stand-alone library (SAL). On Linux and Windows, this works for
-   --  static libraries; on macOS, it may not (because of limitations
-   --  of the Mach-O object format). This will show up if the library
-   --  uses components of GNARL (the tasking runtime) and the using
-   --  program doesn't; we don't use the tasking runtime, so we should
-   --  be good.
+   --  stand-alone library (SAL). This is a Good Thing here, because
+   --  the existing implementation using AdaGOOP would be hard to
+   --  modify even if the appropriate release was known. Using this
+   --  library interface exposes the minimal required interface.
    for Library_Interface use ("XIA");
 
    for Languages use ("ada");
