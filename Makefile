@@ -70,18 +70,5 @@ install-relocatable: lib-relocatable-stamp
 	  --build-var=LIBRARY_TYPE			\
 	  --build-name=relocatable
 
-doc: doc-stamp
-doc-stamp: src/*.ads
-	-rm -f doc/*
-	$(GPRBUILD) -p -P XIA -XLIBRARY_TYPE=static -f -cargs -gnatct
-	ls src/*.ads | grep -v xia_parser | adabrowse	\
-	  -f -						\
-	  -c adabrowse.cfg				\
-	  -o doc/					\
-	  -is index.html				\
-	  -I src					\
-	  -T .build-static
-	touch $@
-
 .PHONY: doc force install libs		\
   install-static install-relocatable

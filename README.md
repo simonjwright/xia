@@ -3,9 +3,9 @@ specification.  XIA is built atop the DOM component of AdaCore's
 XML/Ada implementation.
 
 Submitting XPath queries is done via the `XPath_Query` function in
-package `McKae.XML.XPath.XIA`. The function returns a Node_List, as
+package `XIA`. The function returns a Node_List, as
 defined in `DOM.Core`, whose contents can be accessed with the `Item`
-function in `DOM.Core.Nodes`;
+function in `DOM.Core.Nodes`.
 
 A BASH script, `txia`, and an input file of XPath queries,
 `txia_tests.txt`, are provided in the `test/` directory to jam a bunch
@@ -20,9 +20,6 @@ To generate the test program, cd to the test directory and invoke
 gprbuild as follows:
 
     gprbuild -p -P test.gpr test_xpath
-
-AdaBrowse generated source code documentation resides in the doc
-subdirectory.
 
 Version history up to 1.00 is [here](HISTORY.md).
 
