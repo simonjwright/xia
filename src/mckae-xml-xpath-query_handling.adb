@@ -28,41 +28,68 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Mckae.XML.XPath.DFS_Processing;
 with Mckae.XML.XPath.Locations;
-
-with Xia_Parser_Model;
-with Xia_Parser_Parser;
+with Ada.Environment_Variables;
+with Ada.IO_Exceptions;
+with Ada.Text_IO;
+with Xpath_Model;
+with Xpath_Parser;
 
 package body Mckae.XML.XPath.Query_Handling is
 
+   Visitor : aliased DFS_Processing.DFS;
 
-   -- Decode the string representation of the location path into its
+   --  Decode the string representation of the location path into its
    --  components parts
-   function Pathify(
-                    Xpath_Query : Locations.Xpath_String
-                    -- The XPath query to decode
-                   ) return Locations.Location_Paths is
-
---        Parse_Tree : Xia_Parser_model.Parseable_ptr;
+   function Pathify (Xpath_Query : Locations.Xpath_String)
+                    return Locations.Location_Paths is
 
       Path : Locations.Location_Paths;
       Step : Locations.Location_Steps;
 
+      --  The generated parser expects the input line in a file.
+      Tmp_File_Name : constant String
+        := Ada.Environment_Variables.Value ("TMPDIR") & "xia-tmp";
+      Tmp_File : Ada.Text_IO.File_Type;
+
    begin
-      xia_parser_parser.run(Xpath_Query);
-      parse_tree := xia_parser_parser.get_parse_tree;
+
+      --  Create the temp file if needed
+      begin
+         Ada.Text_IO.Create (Tmp_File,
+                             Mode => Ada.Text_IO.Out_File,
+                             Name => Tmp_File_Name);
+         Ada.Text_IO.Close (Tmp_File);
+      exception
+         when Ada.IO_Exceptions.Name_Error => null;  -- already exists
+         when others => null;
+      end;
+
+      --  Write the query to the temp file
+      Ada.Text_IO.Open (Tmp_File,
+                        Mode => Ada.Text_IO.Out_File,
+                        Name => Tmp_File_Name);
+      Ada.Text_IO.Put (Tmp_File, Xpath_Query);
+      Ada.Text_IO.Close (Tmp_File);
+      Xpath_Parser.Run (Tmp_File_Name);
+      Ada.Text_IO.New_Line;
+
+      Xpath_Parser.Run(Tmp_File_Name);
+      parse_tree := Xpath_parser.get_parse_tree;
       Locations.Reset_For_Parsing;
-      Xia_Parser_Model.Pathify(parse_tree.all);
+      --  Xpath_Model.Pathify(parse_tree.all); replaced by ..
+      Parse_Tree.Acceptor (Visitor'Access);
 
       Path := Locations.Get_Path;
 
       Path.Absolute := Xpath_Query(Xpath_Query'First) = '/';
-      Path.Path(Path.Steps).Output_Step := True;
+      Path.Path (Path.Steps).Output_Step := True;
 
       return Path;
 
    exception
-      when Xia_Parser_Parser.Syntax_Error =>
+      when Xpath_Parser.Syntax_Error =>
         raise Malformed_Query;
    end Pathify;
 

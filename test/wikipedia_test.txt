@@ -1,0 +1,13 @@
+wikipedia.xml
+a/@name
+a/b/@name
+a/b/c/@name
+a//b/@name
+a/b/*/@name
+a//b/*/@name
+a//b/*[1]/@name
+(a//b/*)/@name
+(a//b/*)[1]/@name
+//b/*/@name
+
+^-blank line terminates

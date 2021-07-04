@@ -1,0 +1,15 @@
+<a name="a1">
+  <b name="b1">
+    <c name="c1"/>
+    <d name="d1"/>
+  </b>
+  <b name="b2">
+    <e name="e1"/>
+  </b>
+  <x name="x1">
+    <b name="b3">
+      <f name="f1"/>
+    </b>
+  </x>
+</a>
+

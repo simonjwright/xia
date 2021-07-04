@@ -1,9 +1,10 @@
-adabrowse*
 alire
 config
 
-.build-static
-.build-relocatable
+generate
+
+.build*
+
 lib-static
 lib-relocatable
 

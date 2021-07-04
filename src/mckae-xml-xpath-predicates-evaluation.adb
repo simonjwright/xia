@@ -28,14 +28,17 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Dom.Core;
 with Mckae.XML.XPath.Expressions;
-with Xia_Parser_Model;
+with Mckae.XML.XPath.Predicates.Evaluation.Evaluators;
+with Xpath_Model;
+
+with Ada.Text_IO; use Ada.Text_IO;
 
 package body McKae.XML.XPath.Predicates.Evaluation is
 
-   use Xia_Parser_Model;
-
-   ----------------------------------------------------------------------
+   use Mckae.XML.XPath.Expressions;
+   use Xpath_Model;
 
    procedure Evaluate_Predicate (Nodes            : in out Node_Sets.Set;
                                  Handle           : in     Predicate_Handles;
@@ -65,10 +68,10 @@ package body McKae.XML.XPath.Predicates.Evaluation is
             Cursor := Nodes.First;
 
             while Cursor /= Node_Sets.No_Element loop
-               if Locations.Forward_Axis(Originating_Axis) then
+               if Locations.Forward_Axis (Originating_Axis) then
                   Node_Item_Position := Node_Item_Index;
                else
-                  pragma Assert(Locations.Reverse_Axis(Originating_Axis));
+                  pragma Assert (Locations.Reverse_Axis (Originating_Axis));
                   Node_Item_Position := (Node_Set_Size - Node_Item_Index) + 1;
                end if;
 
@@ -77,10 +80,10 @@ package body McKae.XML.XPath.Predicates.Evaluation is
                     Node_Sets.Element (Cursor).Matching_Node,
                   Node_Position => Node_Item_Position,
                   Node_Set_Size => Node_Set_Size);
-               Xia_Parser_Model.Evaluate(Handle.Predicate_List.Element (P).all,
-                                         Node_Item,
-                                         Expression);
-               Expressions.Coerce(Expression, Expressions.As_Boolean);
+               Evaluators.Evaluate (Handle.Predicate_List.Element (P).all,
+                                    Node_Item,
+                                    Expression);
+               Expressions.Coerce (Expression, Expressions.As_Boolean);
 
                if Expression.B then
                   Filtered_Nodes.Append (Node_Sets.Element (Cursor));

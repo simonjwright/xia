@@ -50,11 +50,13 @@ package body Mckae.XML.XPath.Locations is
 
    procedure Add (Location_Step : in     Location_Steps;
                   Location_Path : in out Location_Paths) is
-
-      use type Step_Indices;
-
    begin
-      pragma Debug(Put_Line("Adding: " & To_String(Location_Step.Node_Test.Name)));
+      pragma Debug (Put_Line ("Adding: "
+                               & Location_Step.Node_Test.Node_Test'Image
+                               & " ("
+                               & To_String(Location_Step.Node_Test.Name)
+                               & ")"));
+      pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
 
       Location_Path.Steps := Location_Path.Steps + 1;
       Location_Path.Path.Append (Location_Step);
@@ -65,7 +67,7 @@ package body Mckae.XML.XPath.Locations is
    procedure Add (Location_Step : in     Location_Steps) is
 
    begin
-      Add(Location_Step, Parsing_Path);
+      Add (Location_Step, Parsing_Path);
    end Add;
 
    -------------------------------------------------------------------
@@ -73,10 +75,10 @@ package body Mckae.XML.XPath.Locations is
    procedure Free (Location_Path : in out Location_Paths) is
       Step : Location_Steps;
    begin
-      for P in 1 .. Location_Path.Path.Length loop
-         Step := Location_Path.Path.Element(P);
+      for P in 1 .. Positive (Location_Path.Path.Length) loop
+         Step := Location_Path.Path.Element (P);
          Predicates.Release (Step.Location_Predicates);
-         Location_Path.Path.Replace_Element(P, Step);
+         Location_Path.Path.Replace_Element (P, Step);
       end loop;
       Location_Path.Path.Clear;
    end Free;

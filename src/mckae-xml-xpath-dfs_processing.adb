@@ -1,0 +1,1009 @@
+with Xpath_Model;
+with Xpath_Visitor_Interface;
+
+with McKae.XML.XPath.Expressions; use McKae.XML.XPath.Expressions;
+with Mckae.XML.XPath.Locations; use Mckae.XML.Xpath.Locations;
+with Mckae.XML.XPath.Predicates; use Mckae.XML.XPath.Predicates;
+
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Tags;
+
+with Ada.Text_IO;
+
+package body McKae.XML.XPath.DFS_Processing is
+
+   function "+" (S : String) return Unbounded_String
+                renames To_Unbounded_String;
+
+   function "-" (U : Unbounded_String) return String
+                 renames To_String;
+
+   function Get_Axis_Name (This : Axis_Name_Nonterminal'Class)
+                          return Unbounded_String
+   is
+      use Ada.Tags;
+   begin
+      return
+        +(if This'Tag = Axis_Name_Nonterminal1'Tag then
+             Axis_Name_Nonterminal1 (This).Ancestor_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal2'Tag then
+             Axis_Name_Nonterminal2 (This).Ancestor_Or_Self_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal3'Tag then
+             Axis_Name_Nonterminal3 (This).Attribute_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal4'Tag then
+             Axis_Name_Nonterminal4 (This).Child_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal5'Tag then
+             Axis_Name_Nonterminal5 (This).Descendant_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal6'Tag then
+             Axis_Name_Nonterminal6 (This).Descendant_Or_Self_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal7'Tag then
+             Axis_Name_Nonterminal7 (This).Following_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal8'Tag then
+             Axis_Name_Nonterminal8 (This).Following_Sibling_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal9'Tag then
+             Axis_Name_Nonterminal9 (This).Namespace_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal10'Tag then
+             Axis_Name_Nonterminal10 (This).Parent_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal11'Tag then
+             Axis_Name_Nonterminal11 (This).Preceding_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal12'Tag then
+             Axis_Name_Nonterminal12 (This).Preceding_Sibling_Part.Token_String.all
+          elsif This'Tag = Axis_Name_Nonterminal13'Tag then
+             Axis_Name_Nonterminal13 (This).Self_Part.Token_String.all
+          else
+             raise  Constraint_Error
+               with Expanded_Name (This'Tag) & " not an Axis tag");
+   end Get_Axis_Name;
+
+   function Get_Node_Type_Name (This : Node_Type_Nonterminal'Class)
+                               return Unbounded_String
+   is
+      use Ada.Tags;
+   begin
+      return
+        +(if This'Tag = Node_Type_Nonterminal1'Tag then
+             Node_Type_Nonterminal1 (This).Comment_Part.Token_String.all
+          elsif This'Tag = Node_Type_Nonterminal2'Tag then
+             Node_Type_Nonterminal2 (This).Text_Part.Token_String.all
+          elsif This'Tag = Node_Type_Nonterminal3'Tag then
+             Node_Type_Nonterminal3 (This).Processing_Instruction_Part.Token_String.all
+          elsif This'Tag = Node_Type_Nonterminal4'Tag then
+             Node_Type_Nonterminal4 (This).Node_Part.Token_String.all
+          else
+             raise  Constraint_Error
+               with Expanded_Name (This'Tag) & " not a Node_Type tag");
+   end Get_Node_Type_Name;
+
+   function Get_Literal (This : Literal_Nonterminal'Class)
+                        return Unbounded_String is
+      use Ada.Tags;
+   begin
+      return
+        +(if This'Tag = Literal_Nonterminal1'Tag then
+             Literal_Nonterminal1(This).DQ_Literal_Part.Token_String.all
+          elsif This'Tag = Literal_Nonterminal2'Tag then
+             Literal_Nonterminal2(This).SQ_Literal_Part.Token_String.all
+          else
+             raise  Constraint_Error
+               with Expanded_Name (This'Tag) & " not a Literal tag");
+   end Get_Literal;
+
+   Star : constant Unbounded_String := To_Unbounded_String("*");
+
+   -- Location step under construction
+   New_Location_Step : Location_Steps;
+
+   procedure Set_Location_Step (Step : Location_Steps) is
+   begin
+      Ada.Text_IO.Put_Line ("setting step " & Step.Node_Test.Node_Test'Image);
+      New_Location_Step := Step;
+   end Set_Location_Step;
+
+   procedure Change_Location_Step (Step : Location_Steps) is
+   begin
+      Ada.Text_IO.Put_Line
+        ("changing step "
+           & New_Location_Step.Node_Test.Node_Test'Image
+           & " to "
+           & Step.Node_Test.Node_Test'Image);
+      New_Location_Step := Step;
+   end Change_Location_Step;
+
+   function Get_Location_Step return Location_Steps is (New_Location_Step);
+
+   -- Rely on the initialization to set establish this as an empty step
+   Empty_Location_Step : Location_Steps;
+
+   procedure Reset is
+   begin
+      Predicates.Release (New_Location_Step.Location_Predicates);
+      New_Location_Step := Empty_Location_Step;
+      Ada.Text_IO.Put_Line ("resetting");
+   end Reset;
+
+   procedure Visit_Parseable_Token
+     (I : access DFS;
+      T : access xpath_Model.Parseable_Token'Class) is
+   begin
+      null;
+      --  Ada.Text_IO.Put (' ');
+      --  Ada.Text_IO.Put (T.Token_String.all);
+   end Visit_Parseable_Token;
+
+   procedure After_Literal_Nonterminal1
+     (I : access DFS;
+      T : access Literal_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Literal_Nonterminal1;
+
+   procedure After_Literal_Nonterminal2
+     (I : access DFS;
+      T : access Literal_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Literal_Nonterminal2;
+
+   procedure After_Number_Nonterminal1
+     (I : access DFS;
+      T : access Number_Model.Number_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Number_Nonterminal1;
+
+   overriding procedure After_Number_Nonterminal2
+     (I : access DFS;
+      T : access Number_Model.Number_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Number_Nonterminal2;
+
+   procedure After_Unary_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Unary_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Unary_Expr_Nonterminal1;
+
+   procedure After_Unary_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Unary_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Unary_Expr_Nonterminal2;
+
+   procedure After_Multiplicative_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Multiplicative_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Multiplicative_Expr_Nonterminal1;
+
+   procedure After_Multiplicative_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Multiplicative_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Multiplicative_Expr_Nonterminal2;
+
+   procedure After_Multiplicative_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Multiplicative_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Multiplicative_Expr_Nonterminal3;
+
+   procedure After_Multiplicative_Expr_Nonterminal4
+     (I : access DFS;
+      T : access Multiplicative_Expr_Nonterminal4'Class) is
+   begin
+      null;
+   end After_Multiplicative_Expr_Nonterminal4;
+
+   procedure After_Additive_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Additive_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Additive_Expr_Nonterminal1;
+
+   procedure After_Additive_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Additive_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Additive_Expr_Nonterminal2;
+
+   procedure After_Additive_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Additive_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Additive_Expr_Nonterminal3;
+
+   procedure After_Relational_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Relational_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Relational_Expr_Nonterminal1;
+
+   procedure After_Relational_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Relational_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Relational_Expr_Nonterminal2;
+
+   procedure After_Relational_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Relational_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Relational_Expr_Nonterminal3;
+
+   procedure After_Relational_Expr_Nonterminal4
+     (I : access DFS;
+      T : access Relational_Expr_Nonterminal4'Class) is
+   begin
+      null;
+   end After_Relational_Expr_Nonterminal4;
+
+   procedure After_Relational_Expr_Nonterminal5
+     (I : access DFS;
+      T : access Relational_Expr_Nonterminal5'Class) is
+   begin
+      null;
+   end After_Relational_Expr_Nonterminal5;
+
+   procedure After_Equality_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Equality_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Equality_Expr_Nonterminal1;
+
+   procedure After_Equality_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Equality_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Equality_Expr_Nonterminal2;
+
+   procedure After_Equality_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Equality_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Equality_Expr_Nonterminal3;
+
+   procedure After_And_Expr_Nonterminal1
+     (I : access DFS;
+      T : access And_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_And_Expr_Nonterminal1;
+
+   procedure After_And_Expr_Nonterminal2
+     (I : access DFS;
+      T : access And_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_And_Expr_Nonterminal2;
+
+   procedure After_Or_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Or_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Or_Expr_Nonterminal1;
+
+   procedure After_Or_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Or_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Or_Expr_Nonterminal2;
+
+   procedure After_Filter_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Filter_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Filter_Expr_Nonterminal1;
+
+   procedure After_Filter_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Filter_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Filter_Expr_Nonterminal2;
+
+   procedure After_Path_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Path_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Path_Expr_Nonterminal1;
+
+   procedure After_Path_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Path_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Path_Expr_Nonterminal2;
+
+   procedure After_Path_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Path_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Path_Expr_Nonterminal3;
+
+   procedure After_Path_Expr_Nonterminal4
+     (I : access DFS;
+      T : access Path_Expr_Nonterminal4'Class) is
+   begin
+      null;
+   end After_Path_Expr_Nonterminal4;
+
+   procedure After_Union_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Union_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Union_Expr_Nonterminal1;
+
+   procedure After_Union_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Union_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Union_Expr_Nonterminal2;
+
+   procedure After_Function_Name_Nonterminal
+     (I : access DFS;
+      T : access Function_Name_Nonterminal'Class) is
+   begin
+      null;
+   end After_Function_Name_Nonterminal;
+
+   procedure After_Argument_Nonterminal
+     (I : access DFS;
+      T : access Argument_Nonterminal'Class) is
+   begin
+      null;
+   end After_Argument_Nonterminal;
+
+   procedure After_Arguments_Nonterminal1
+     (I : access DFS;
+      T : access Arguments_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Arguments_Nonterminal1;
+
+   procedure After_Arguments_Nonterminal2
+     (I : access DFS;
+      T : access Arguments_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Arguments_Nonterminal2;
+
+   procedure After_Arguments_Nonterminal3
+     (I : access DFS;
+      T : access Arguments_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Arguments_Nonterminal3;
+
+   procedure After_Function_Call_Nonterminal
+     (I : access DFS;
+      T : access Function_Call_Nonterminal'Class) is
+   begin
+      null;
+   end After_Function_Call_Nonterminal;
+
+   procedure After_Variable_Reference_Nonterminal
+     (I : access DFS;
+      T : access Variable_Reference_Nonterminal'Class) is
+   begin
+      null;
+   end After_Variable_Reference_Nonterminal;
+
+   procedure After_Primary_Expr_Nonterminal1
+     (I : access DFS;
+      T : access Primary_Expr_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Primary_Expr_Nonterminal1;
+
+   procedure After_Primary_Expr_Nonterminal2
+     (I : access DFS;
+      T : access Primary_Expr_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Primary_Expr_Nonterminal2;
+
+   procedure After_Primary_Expr_Nonterminal3
+     (I : access DFS;
+      T : access Primary_Expr_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Primary_Expr_Nonterminal3;
+
+   procedure After_Primary_Expr_Nonterminal4
+     (I : access DFS;
+      T : access Primary_Expr_Nonterminal4'Class) is
+   begin
+      null;
+   end After_Primary_Expr_Nonterminal4;
+
+   procedure After_Primary_Expr_Nonterminal5
+     (I : access DFS;
+      T : access Primary_Expr_Nonterminal5'Class) is
+   begin
+      null;
+   end After_Primary_Expr_Nonterminal5;
+
+   procedure After_Expr_Nonterminal
+     (I : access DFS;
+      T : access Expr_Nonterminal'Class) is
+   begin
+      null;
+   end After_Expr_Nonterminal;
+
+   procedure After_Abbreviated_Step_Nonterminal1
+     (I : access DFS;
+      T : access Abbreviated_Step_Nonterminal1'Class) is
+   begin
+      Set_Location_Step ((Axis                => Self_Axis,
+                          Node_Test           => (Node_Test => Node_Node_Test,
+                                                  Name      => Star),
+                          Location_Predicates => Predicates.Null_Predicate,
+                          Output_Step         => False));
+   end After_Abbreviated_Step_Nonterminal1;
+
+   procedure After_Abbreviated_Step_Nonterminal2
+     (I : access DFS;
+      T : access Abbreviated_Step_Nonterminal2'Class) is
+   begin
+      Set_Location_Step ((Axis                => Parent_Axis,
+                          Node_Test           => (Node_Test => Node_Node_Test,
+                                                  Name      => Star),
+                          Location_Predicates => Predicates.Null_Predicate,
+                          Output_Step         => False));
+   end After_Abbreviated_Step_Nonterminal2;
+
+   procedure After_Abbreviated_Relative_Location_Path_Nonterminal
+     (I : access DFS;
+      T : access Abbreviated_Relative_Location_Path_Nonterminal'Class) is
+   begin
+      --  Pathify(This.Relative_Location_Path_Part.all); XXXX
+      Add (Get_Location_Step);
+      Add ((Axis                => Descendant_Or_Self_Axis,
+            Node_Test           => (Node_Test => Node_Node_Test,
+                                    Name      => Star),
+            Location_Predicates => Predicates.Null_Predicate,
+            Output_Step         => False));
+      Reset;
+      --  Pathify(This.Step_Part.all); XXXX
+   end After_Abbreviated_Relative_Location_Path_Nonterminal;
+
+   procedure After_Abbreviated_Absolute_Location_Path_Nonterminal
+     (I : access DFS;
+      T : access Abbreviated_Absolute_Location_Path_Nonterminal'Class) is
+   begin
+      --  The "//" part
+      Add ((Axis                => Descendant_Or_Self_Axis,
+            Node_Test           => (Node_Test => Node_Node_Test,
+                                    Name      => Star),
+            Location_Predicates => Predicates.Null_Predicate,
+            Output_Step         => False));
+      Reset;
+      --  Pathify(This.Relative_Location_Path_Part.all); XXXX
+   end After_Abbreviated_Absolute_Location_Path_Nonterminal;
+
+   procedure After_Predicate_Expr_Nonterminal
+     (I : access DFS;
+      T : access Predicate_Expr_Nonterminal'Class) is
+   begin
+      null;
+   end After_Predicate_Expr_Nonterminal;
+
+   procedure After_NCNAME_Or_ID_Nonterminal1
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test :=
+        (Node_Test => QName_Node_Test,
+         Name      => +T.NCName_Part.Token_String.all,
+         Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal1;
+
+   procedure After_NCNAME_Or_ID_Nonterminal2
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal2'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test :=
+        (Node_Test => QName_Node_Test,
+         Name      => Get_Axis_Name (T.Axis_Name_Part.all),
+         Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal2;
+
+   procedure After_NCNAME_Or_ID_Nonterminal3
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal3'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test :=
+        (Node_Test => QName_Node_Test,
+         Name      => Get_Node_Type_Name (T.Node_Type_Part.all),
+         Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal3;
+
+   procedure After_NCNAME_Or_ID_Nonterminal4
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal4'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => QName_Node_Test,
+                                  Name      => +T.And_Part.Token_String.all,
+                                  Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal4;
+
+   procedure After_NCNAME_Or_ID_Nonterminal5
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal5'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => QName_Node_Test,
+                                  Name      => +T.Or_Part.Token_String.all,
+                                  Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal5;
+
+   procedure After_NCNAME_Or_ID_Nonterminal6
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal6'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => QName_Node_Test,
+                                  Name      => +T.Mod_Part.Token_String.all,
+                                  Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal6;
+
+   procedure After_NCNAME_Or_ID_Nonterminal7
+     (I : access DFS;
+      T : access NCNAME_Or_ID_Nonterminal7'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => QName_Node_Test,
+                                  Name      => +T.Div_Part.Token_String.all,
+                                  Prefix    => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_NCNAME_Or_ID_Nonterminal7;
+
+   procedure After_QName_Nonterminal1
+     (I : access DFS;
+      T : access QName_Nonterminal1'Class) is
+   begin
+      null;
+   end After_QName_Nonterminal1;
+
+   procedure After_QName_Nonterminal2
+     (I : access DFS;
+      T : access QName_Nonterminal2'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      --  XXX we assume here that the names are actually just that,
+      --  not e.g. 'or'.
+      Location_Step.Node_Test :=
+        (Node_Test => QName_Node_Test,
+         Name      => +NCNAME_Or_ID_Nonterminal1
+           (T.NCName_Or_ID_Part2.all).NCName_Part.Token_String.all,
+         Prefix    => +NCNAME_Or_ID_Nonterminal1
+           (T.NCName_Or_ID_Part1.all).NCName_Part.Token_String.all);
+      Change_Location_Step (Location_Step);
+   end After_QName_Nonterminal2;
+
+   procedure After_Name_Test_Nonterminal1
+     (I : access DFS;
+      T : access Name_Test_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test.Name := Star;
+      Change_Location_Step (Location_Step);
+   end After_Name_Test_Nonterminal1;
+
+   procedure After_Name_Test_Nonterminal2
+     (I : access DFS;
+      T : access Name_Test_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Name_Test_Nonterminal2;
+
+   procedure After_Name_Test_Nonterminal3
+     (I : access DFS;
+      T : access Name_Test_Nonterminal3'Class) is
+   begin
+      null;
+   end After_Name_Test_Nonterminal3;
+
+   procedure After_Node_Type_Nonterminal1
+     (I : access DFS;
+      T : access Node_Type_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => Comment_Node_Test,
+                                  Name      => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_Node_Type_Nonterminal1;
+
+   procedure After_Node_Type_Nonterminal2
+     (I : access DFS;
+      T : access Node_Type_Nonterminal2'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => Text_Node_Test,
+                                  Name      => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_Node_Type_Nonterminal2;
+
+   procedure After_Node_Type_Nonterminal3
+     (I : access DFS;
+      T : access Node_Type_Nonterminal3'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => Processing_Instruction_Node_Test,
+                                  Name      => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_Node_Type_Nonterminal3;
+
+   procedure After_Node_Type_Nonterminal4
+     (I : access DFS;
+      T : access Node_Type_Nonterminal4'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => Node_Node_Test,
+                                  Name      => Null_Unbounded_String);
+      Change_Location_Step (Location_Step);
+   end After_Node_Type_Nonterminal4;
+
+   procedure After_Node_Test_Nonterminal1
+     (I : access DFS;
+      T : access Node_Test_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test := (Node_Test => NCName_Node_Test,
+                                  Name      => Null_Unbounded_String); -- Set vi
+      Change_Location_Step (Location_Step);
+   end After_Node_Test_Nonterminal1;
+
+   procedure After_Node_Test_Nonterminal2
+     (I : access DFS;
+      T : access Node_Test_Nonterminal2'Class) is
+   begin
+      null;
+   end After_Node_Test_Nonterminal2;
+
+   procedure After_Node_Test_Nonterminal3
+     (I : access DFS;
+      T : access Node_Test_Nonterminal3'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Node_Test :=
+        (Node_Test => Processing_Instruction_Node_Test,
+         Name      => Get_Literal(T.Literal_Part.all));
+      Change_Location_Step (Location_Step);
+   end After_Node_Test_Nonterminal3;
+
+   procedure After_Axis_Name_Nonterminal1
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Ancestor_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal1;
+
+   procedure After_Axis_Name_Nonterminal2
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal2'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Ancestor_Or_Self_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal2;
+
+   procedure After_Axis_Name_Nonterminal3
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal3'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Attribute_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal3;
+
+   procedure After_Axis_Name_Nonterminal4
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal4'Class) is
+   begin
+      null;
+   end After_Axis_Name_Nonterminal4;
+
+   procedure After_Axis_Name_Nonterminal5
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal5'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Descendant_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal5;
+
+   procedure After_Axis_Name_Nonterminal6
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal6'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Descendant_Or_Self_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal6;
+
+   procedure After_Axis_Name_Nonterminal7
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal7'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Following_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal7;
+
+   procedure After_Axis_Name_Nonterminal8
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal8'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Following_Sibling_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal8;
+
+   procedure After_Axis_Name_Nonterminal9
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal9'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Namespace_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal9;
+
+   procedure After_Axis_Name_Nonterminal10
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal10'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Parent_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal10;
+
+   procedure After_Axis_Name_Nonterminal11
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal11'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Preceding_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal11;
+
+   procedure After_Axis_Name_Nonterminal12
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal12'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Preceding_Sibling_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal12;
+
+   procedure After_Axis_Name_Nonterminal13
+     (I : access DFS;
+      T : access Axis_Name_Nonterminal13'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Self_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Axis_Name_Nonterminal13;
+
+   procedure After_Axis_Specifier_Nonterminal
+     (I : access DFS;
+      T : access Axis_Specifier_Nonterminal'Class) is
+   begin
+      null;
+   end After_Axis_Specifier_Nonterminal;
+
+   procedure After_Predicate_Nonterminal
+     (I : access DFS;
+      T : access Predicate_Nonterminal'Class) is
+   begin
+      Predicates.Add_Predicate_Parse
+        (New_Location_Step.Location_Predicates,
+         T.Predicate_Expr_Part.Expr_Part);
+   end After_Predicate_Nonterminal;
+
+   procedure After_Abbreviated_Step_Base_Nonterminal1
+     (I : access DFS;
+      T : access Abbreviated_Step_Base_Nonterminal1'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Child_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Abbreviated_Step_Base_Nonterminal1;
+
+   procedure After_Abbreviated_Step_Base_Nonterminal2
+     (I : access DFS;
+      T : access Abbreviated_Step_Base_Nonterminal2'Class) is
+      Location_Step : Location_Steps;
+   begin
+      Location_Step := Get_Location_Step;
+      Location_Step.Axis := Attribute_Axis;
+      Change_Location_Step (Location_Step);
+   end After_Abbreviated_Step_Base_Nonterminal2;
+
+   procedure After_Step_Base_Nonterminal1
+     (I : access DFS;
+      T : access Step_Base_Nonterminal1'Class) is
+   begin
+      --  Pathify(This.Axis_Specifier_Part.all);
+      --  Pathify(This.Node_Test_Part.all);
+      null;
+   end After_Step_Base_Nonterminal1;
+
+   procedure After_Step_Base_Nonterminal2
+     (I : access DFS;
+      T : access Step_Base_Nonterminal2'Class) is
+   begin
+      --  Pathify(This.Abbreviated_Step_Base_Part.all);
+      null;
+   end After_Step_Base_Nonterminal2;
+
+   procedure After_Predicates_Nonterminal1
+     (I : access DFS;
+      T : access Predicates_Nonterminal1'Class) is
+   begin
+      null;
+   end After_Predicates_Nonterminal1;
+
+   procedure After_Predicates_Nonterminal2
+     (I : access DFS;
+      T : access Predicates_Nonterminal2'Class) is
+   begin
+      --  Pathify(This.Predicates_Part.all);
+      --  Pathify(This.Predicate_Part.all);
+      null;
+   end After_Predicates_Nonterminal2;
+
+   procedure After_Step_Nonterminal1
+     (I : access DFS;
+      T : access Step_Nonterminal1'Class) is
+   begin
+      --  Pathify(This.Step_Base_Part.all);
+      --  Pathify(This.Predicates_Part.all);
+      null;
+   end After_Step_Nonterminal1;
+
+   procedure After_Step_Nonterminal2
+     (I : access DFS;
+      T : access Step_Nonterminal2'Class) is
+   begin
+      --  Pathify(This.Abbreviated_Step_Part.all);
+      null;
+   end After_Step_Nonterminal2;
+
+   procedure After_Relative_Location_Path_Nonterminal1
+     (I : access DFS;
+      T : access Relative_Location_Path_Nonterminal1'Class) is
+   begin
+      --  Pathify(This.Step_Part.all);
+      null;
+   end After_Relative_Location_Path_Nonterminal1;
+
+   procedure After_Relative_Location_Path_Nonterminal2
+     (I : access DFS;
+      T : access Relative_Location_Path_Nonterminal2'Class) is
+   begin
+      --  An initial relative location is included here, process it,
+      --  add the step, then work on the next step part
+      --  Pathify(This.Relative_Location_Path_Part.all);
+      Add (Get_Location_Step);
+      Reset;
+      --  Pathify(This.Step_Part.all);
+   end After_Relative_Location_Path_Nonterminal2;
+
+   procedure After_Relative_Location_Path_Nonterminal3
+     (I : access DFS;
+      T : access Relative_Location_Path_Nonterminal3'Class) is
+   begin
+      --  Pathify(This.Abbreviated_Relative_Location_Path_Part.all);
+      null;
+   end After_Relative_Location_Path_Nonterminal3;
+
+   procedure After_Absolute_Location_Path_Nonterminal1
+     (I : access DFS;
+      T : access Absolute_Location_Path_Nonterminal1'Class) is
+   begin
+      Set_Location_Step
+        ((Axis                => Self_Axis,
+          Node_Test           => (Node_Test => Node_Node_Test,
+                                  Name      => Null_Unbounded_String),
+          Location_Predicates => Predicates.Null_Predicate,
+          Output_Step         => False));
+   end After_Absolute_Location_Path_Nonterminal1;
+
+   procedure After_Absolute_Location_Path_Nonterminal2
+     (I : access DFS;
+      T : access Absolute_Location_Path_Nonterminal2'Class) is
+   begin
+      --  Pathify(This.Relative_Location_Path_Part.all);
+      null;
+   end After_Absolute_Location_Path_Nonterminal2;
+
+   procedure After_Absolute_Location_Path_Nonterminal3
+     (I : access DFS;
+      T : access Absolute_Location_Path_Nonterminal3'Class) is
+   begin
+      --  Pathify(This.Abbreviated_Absolute_Location_Path_Part.all);
+      null;
+   end After_Absolute_Location_Path_Nonterminal3;
+
+   procedure After_Location_Path_Nonterminal1
+     (I : access DFS;
+      T : access Location_Path_Nonterminal1'Class) is
+   begin
+      --  Pathify(This.Relative_Location_Path_Part.all);
+      Add (Get_Location_Step);
+      Reset;
+   end After_Location_Path_Nonterminal1;
+
+   procedure After_Location_Path_Nonterminal2
+     (I : access DFS;
+      T : access Location_Path_Nonterminal2'Class) is
+   begin
+      --  Pathify(This.Absolute_Location_Path_Part.all);
+      Add (Get_Location_Step);
+      Reset;
+   end After_Location_Path_Nonterminal2;
+
+end McKae.XML.XPath.DFS_Processing;

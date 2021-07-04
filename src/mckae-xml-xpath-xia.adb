@@ -34,8 +34,8 @@ with DOM.Core.Nodes;
 with McKae.XML.XPath.XIA_Worker;
 with McKae.XML.XPath.Query_Handling;
 
-with xia_parser_Model;
-with xia_parser_Parser;
+with Xpath_Model;
+with Xpath_Parser;
 
 package body McKae.XML.XPath.XIA is
 
@@ -49,7 +49,7 @@ package body McKae.XML.XPath.XIA is
    begin
       Results := XIA_Worker.XPath_Query (N, XPath);
 
-      Query_Handling.Parse_Tree.Release;
+      --  Query_Handling.Parse_Tree.Release;   XXXX
 
       return Results;
 

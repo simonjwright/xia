@@ -29,26 +29,23 @@
 ------------------------------------------------------------------------
 
 with Mckae.XML.XPath.Locations;
-with Xia_Parser_Model;
+with Xpath_Model;
 
 package Mckae.XML.XPath.Query_Handling is
 
-
    use McKae.XML.XPath;
 
-   -- Decode the string representation of the location path into its
+   --  Decode the string representation of the location path into its
    --  components parts
-   function Pathify(
-                    Xpath_Query : Locations.Xpath_String
-                    -- The XPath query to decode
-                   ) return Locations.Location_Paths;
+   function Pathify (Xpath_Query : Locations.Xpath_String)
+                    return Locations.Location_Paths;
 
-   -- Release the resources used by the construction of a location path
-   procedure Free(Location_Path : in out Locations.Location_Paths);
+   --  Release the resources used by the construction of a location path
+   procedure Free (Location_Path : in out Locations.Location_Paths);
 
-   -- Exception raised when the query does not conform to XPath syntax
+   --  Exception raised when the query does not conform to XPath syntax
    Malformed_Query : exception;
 
-   Parse_Tree : Xia_Parser_Model.Parseable_Ptr;
+   Parse_Tree : Xpath_Model.Parseable_Ptr;
 
 end Mckae.XML.XPath.Query_Handling;

@@ -30,26 +30,19 @@
 
 package body McKae.XML.XPath.Predicates is
 
-
-   ------------------------------------------------------------------------
-
-   procedure Release(Handle : in out Predicate_Handles)
+   procedure Release (Handle : in out Predicate_Handles)
    is
    begin
-      Predicate_Handle_Pkg.Clear(Handle.Predicate_List);
-      Handle := Null_Predicate;
+      Handle.Predicate_List.Clear;
+      Handle := Null_Predicate;   -- XXX needed?
    end Release;
-
-   ------------------------------------------------------------------------
 
    procedure Add_Predicate_Parse
      (Handle : in out Predicate_Handles;
-      T      : in     Xia_Parser_Model.Parseable_Ptr)
+      T      : in     not null Xpath_Model.Parseable_Ptr)
    is
    begin
-      Predicate_Handle_Pkg.Append(Handle.Predicate_List, T);
+      Handle.Predicate_List.Append (T);
    end Add_Predicate_Parse;
-
-   ------------------------------------------------------------------------
 
 end McKae.XML.XPath.Predicates;

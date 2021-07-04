@@ -35,7 +35,6 @@ with Ada.Strings.Unbounded;
 use  Ada.Strings.Unbounded;
 
 with Dom.Core.Append_Node;
---with Dom.Core.Attrs;
 with Dom.Core.Nodes;
 
 with Mckae.Xml.Xpath.Locations;
@@ -45,8 +44,8 @@ with Mckae.XML.XPath.Predicates;
 with Mckae.XML.XPath.Predicates.Evaluation;
 with McKae.XML.XPath.Query_Handling;
 
-with Xia_Parser_Model;
-with XIA_Parser_Parser;
+with Xpath_Model;
+with Xpath_Parser;
 
 package body Mckae.XML.XPath.XIA_Worker is
 
@@ -542,7 +541,7 @@ package body Mckae.XML.XPath.XIA_Worker is
       Matchings := New_Matchings;
 
    exception
-      when Xia_Parser_Parser.Syntax_Error =>
+      when Xpath_Parser.Syntax_Error =>
         raise Malformed_XPath;
    end Extract_Nodes;
 

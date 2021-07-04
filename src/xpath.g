@@ -67,20 +67,20 @@ MOD   mod
 OR    or
 
 -- Delimiters
-L_PAREN   "("     
-R_PAREN   ")"     
+L_PAREN   "("
+R_PAREN   ")"
 L_BRACKET "["
 R_BRACKET "]"
 
-STAR   "*"    
-PLUS   "+"     
-MINUS   "-"     
+STAR   "*"
+PLUS   "+"
+MINUS   "-"
 
-DOT   "."     
+DOT   "."
 DOUBLE_DOT   ".."
-SLASH   "/"     
+SLASH   "/"
 DOUBLE_SLASH   "//"
-COLON   ":"     
+COLON   ":"
 DOUBLE_COLON   "::"
 
 AT_SIGN   "@"
@@ -89,12 +89,12 @@ COMMA    ","
 DOLLAR   "$"
 V_BAR    "|"
 
-EQ   "="     
-NE   "!="    
-GT   ">"     
-GE   ">="   
-LT   "<"     
-LE   "<="   
+EQ   "="
+NE   "!="
+GT   ">"
+GE   ">="
+LT   "<"
+LE   "<="
 
 -- Literals
 SQ_LITERAL  {SQ_LITERAL}
@@ -108,10 +108,7 @@ NCNAME          {NCNAME}
 
 -- Whitespace and Comments
 --Must be "ignore", special connotations for ADAGoop
---ignore   [\ \t\r\n]*        
-
-global_methods
-Pathify
+ignore   [\ \t\r\n]*
 
 --XPath grammar goes here
 grammar
@@ -120,9 +117,9 @@ grammar
 
 Location_Path : Relative_Location_Path
                 | Absolute_Location_Path
-                ;   
+                ;
 
-Absolute_Location_Path : SLASH 
+Absolute_Location_Path : SLASH
                     | SLASH Relative_Location_Path
                     | Abbreviated_Absolute_Location_Path
                     ;
@@ -290,7 +287,7 @@ Unary_Expr          : Union_Expr
 Number              : INTEGER
                     | DECIMAL_LITERAL
                     ;
-                
+
 Literal             : DQ_LITERAL
                     | SQ_LITERAL
                     ;

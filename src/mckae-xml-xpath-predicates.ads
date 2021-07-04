@@ -28,7 +28,7 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
-with XIA_Parser_Model;
+with Xpath_Model;
 
 private with Ada.Containers.Vectors;
 
@@ -37,32 +37,32 @@ package McKae.XML.XPath.Predicates is
    -- Handle to the predicate content
    type Predicate_Handles is private;
 
-   -- Add the pointer to the root node of a parse subtree that was
+   --  Add the pointer to the root node of a parse subtree that was
    --  created for a predicate
    procedure Add_Predicate_Parse
      (Handle : in out Predicate_Handles;
-      T      : in     Xia_Parser_Model.Parseable_Ptr);
+      T      : in     not null Xpath_Model.Parseable_Ptr);
 
    -- Null instances of a predicate definition
    Null_Predicate : constant Predicate_Handles;
 
-   -- Release the contents of a predicate handle (which may consist
+   --  Release the contents of a predicate handle (which may consist
    --  of one or more individual predicate definitions).  Note that
    --  this does _not_ release the associated parse subtree associated
    --  with each predicate instance.
-   procedure Release(Handle : in out Predicate_Handles);
+   procedure Release (Handle : in out Predicate_Handles);
 
    Malformed_Predicate : exception;
-   -- Raised when a supplied query predicate does not conform to
+   --  Raised when a supplied query predicate does not conform to
    --  predicate syntax
 
 private
-   function "="(L, R : Xia_Parser_Model.Parseable_Ptr) return Boolean
-     renames Xia_Parser_Model."=";
+   function "=" (L, R : Xpath_Model.Parseable_Ptr) return Boolean
+     renames Xpath_Model."=";
 
    package Predicate_Handle_Pkg is new Ada.Containers.Vectors
      (Index_Type => Positive,
-      Element_Type => Xia_Parser_Model.Parseable_Ptr);
+      Element_Type => Xpath_Model.Parseable_Ptr);
 
    type Predicate_Handles is record
       Predicate_List : Predicate_Handle_Pkg.Vector;
