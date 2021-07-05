@@ -34,11 +34,11 @@ with Ada.Long_Float_Text_Io;
 use  Ada.Long_Float_Text_Io;
 with Ada.Strings.Maps;
 
+with Dom.Core.Append_Node;
 with Dom.Core.Attrs;
 with Dom.Core.Documents;
 with Dom.Core.Nodes;
 use  Dom.Core.Nodes;
-with Dom.Core.Append_Node;
 with Mckae.XML.XPath.XIA_Worker;
 
 package body Mckae.XML.XPath.Expressions is

@@ -33,24 +33,23 @@ with Mckae.XML.XPath.Locations;
 
 package McKae.XML.XPath.Predicates.Evaluation is
 
-   ----------------------------------------------------------------------
 
-   procedure Evaluate_Predicate
-     (Nodes            : in out Node_Sets.Set;
-      -- Node set to filter (these were attracted via the
-      -- axis and node test)  -- XXX 'attracted'?
 
-      Handle           : in     Predicate_Handles;
-      -- The list of predicate filters to run the node
-      -- set through
-
-      Originating_Axis : in     Locations.Axes
-     -- The axis via which the node set was selected
-     );
-   -- Filter the node set through the given predicate(s), with the
+   --  Nodes is the node set to filter (these were attracted via the
+   --  axis and node test) -- XXX 'attracted'?
+   --
+   --  L is the list of predicate filters to run the node set through.
+   --
+   --  Originating_Axis is the axis via which the node set was selected.
+   --
+   --  Filter the node set through the given predicate(s), with the
    --  result being only those nodes that pass the filter.  The
    --  Originating_Axis parameter governs whether forward or reverse
    --  document will be followed when indexing nodes.
+   procedure Evaluate_Predicate
+     (Nodes            : in out Node_Sets.Set;
+      Predicates       : in     Predicate_List;
+      Originating_Axis : in     Locations.Axes);
 
 end McKae.XML.XPath.Predicates.Evaluation;
 

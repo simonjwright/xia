@@ -1,4 +1,6 @@
 with "../XIA";
+with "gnatcoll_readline";
+
 project Test is
    for Main use ("bench_xpath.adb", "test_xpath.adb");
    for Exec_Dir use ".";
@@ -6,11 +8,18 @@ project Test is
    for Create_Missing_Dirs use "true";
 
    package Builder is
-      for Global_Compilation_Switches ("Ada") use ("-g");
+      for Global_Compilation_Switches ("Ada") use
+        (
+         "-gnatX",
+         "-g"
+        );
    end Builder;
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-O0");
+      for Default_Switches ("Ada") use
+        (
+         "-O0"
+        );
    end Compiler;
 
    package Binder is

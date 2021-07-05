@@ -72,19 +72,18 @@ package body Mckae.XML.XPath.Query_Handling is
                         Name => Tmp_File_Name);
       Ada.Text_IO.Put (Tmp_File, Xpath_Query);
       Ada.Text_IO.Close (Tmp_File);
-      Xpath_Parser.Run (Tmp_File_Name);
-      Ada.Text_IO.New_Line;
 
-      Xpath_Parser.Run(Tmp_File_Name);
-      parse_tree := Xpath_parser.get_parse_tree;
+      Xpath_Parser.Run (Tmp_File_Name);
+      Parse_Tree := Xpath_Parser.Get_Parse_Tree;
+
       Locations.Reset_For_Parsing;
-      --  Xpath_Model.Pathify(parse_tree.all); replaced by ..
+
       Parse_Tree.Acceptor (Visitor'Access);
 
       Path := Locations.Get_Path;
 
-      Path.Absolute := Xpath_Query(Xpath_Query'First) = '/';
-      Path.Path (Path.Steps).Output_Step := True;
+      Path.Absolute := Xpath_Query (Xpath_Query'First) = '/';
+      Path.Path (Positive (Path.Path.Length)).Output_Step := True;
 
       return Path;
 
@@ -94,9 +93,9 @@ package body Mckae.XML.XPath.Query_Handling is
    end Pathify;
 
    -- Release the resources used by the construction of a location path
-   procedure Free(Location_Path : in out Locations.Location_Paths) is
+   procedure Free (Location_Path : in out Locations.Location_Paths) is
    begin
-      Locations.Free(Location_Path);
+      Locations.Free (Location_Path);
    end Free;
 
 end Mckae.XML.XPath.Query_Handling;

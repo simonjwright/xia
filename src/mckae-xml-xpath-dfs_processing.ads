@@ -24,6 +24,7 @@ private with Expr_Model;
 private with Abbreviated_Step_Model;
 private with Abbreviated_Relative_Location_Path_Model;
 private with Abbreviated_Absolute_Location_Path_Model;
+private with Double_Slash_Model;
 private with Predicate_Expr_Model;
 private with NCNAME_Or_ID_Model;
 private with QName_Model;
@@ -37,6 +38,8 @@ private with Abbreviated_Step_Base_Model;
 private with Step_Base_Model;
 private with Predicates_Model;
 private with Step_Model;
+private with L_Bracket_Model;
+private with R_Bracket_Model;
 private with Relative_Location_Path_Model;
 private with Absolute_Location_Path_Model;
 private with Location_Path_Model;
@@ -74,6 +77,7 @@ private
    use Abbreviated_Step_Model;
    use Abbreviated_Relative_Location_Path_Model;
    use Abbreviated_Absolute_Location_Path_Model;
+   use Double_Slash_Model;
    use Predicate_Expr_Model;
    use NCNAME_Or_ID_Model;
    use QName_Model;
@@ -87,6 +91,8 @@ private
    use Step_Base_Model;
    use Predicates_Model;
    use Step_Model;
+   use L_Bracket_Model;
+   use R_Bracket_Model;
    use Relative_Location_Path_Model;
    use Absolute_Location_Path_Model;
    use Location_Path_Model;
@@ -291,6 +297,10 @@ private
      (I : access DFS;
       T : access Abbreviated_Absolute_Location_Path_Nonterminal'Class);
 
+   overriding procedure After_Double_Slash_Nonterminal
+     (I : access DFS;
+      T : access Double_Slash_nonterminal'Class);
+
    overriding procedure After_Predicate_Expr_Nonterminal
      (I : access DFS;
       T : access Predicate_Expr_Nonterminal'Class);
@@ -454,6 +464,14 @@ private
    overriding procedure After_Predicates_Nonterminal2
      (I : access DFS;
       T : access Predicates_Nonterminal2'Class);
+
+   overriding procedure After_L_Bracket_Nonterminal
+     (I : access DFS;
+      T : access L_Bracket_Nonterminal'Class);
+
+   overriding procedure After_R_Bracket_Nonterminal
+     (I : access DFS;
+      T : access R_Bracket_Nonterminal'Class);
 
    overriding procedure After_Step_Nonterminal1
      (I : access DFS;

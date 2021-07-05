@@ -30,60 +30,74 @@
 
 with Unchecked_Deallocation;
 
-with Text_Io; use Text_IO;
+with Ada.Text_IO;
 
 package body Mckae.XML.XPath.Locations is
 
    use McKae.XML.XPath;
 
-   -------------------------------------------------------------------
-
    Parsing_Path : Location_Paths;
 
-   -------------------------------------------------------------------
+   Accumulating_Predicate : Boolean := False;
 
---     procedure Free is new
---       Unchecked_Deallocation(Location_Path_Steps,
---                              Location_Path_Steps_Handle);
-
-   -------------------------------------------------------------------
-
-   procedure Add (Location_Step : in     Location_Steps;
-                  Location_Path : in out Location_Paths) is
+   procedure Add (Location_Step : in Location_Steps)
+   is
    begin
-      pragma Debug (Put_Line ("Adding: "
-                               & Location_Step.Node_Test.Node_Test'Image
-                               & " ("
-                               & To_String(Location_Step.Node_Test.Name)
-                               & ")"));
-      pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
+      if not Accumulating_Predicate
+      then
+         pragma Debug
+           (Ada.Text_IO.Put_Line ("step: " & Location_Step'Image));
+         pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
 
-      Location_Path.Steps := Location_Path.Steps + 1;
-      Location_Path.Path.Append (Location_Step);
+         Parsing_Path.Path.Append (Location_Step);
+      end if;
    end Add;
 
-   -------------------------------------------------------------------
-
-   procedure Add (Location_Step : in     Location_Steps) is
-
+   procedure Add_Predicate (Predicate : Xpath_Model.Parseable_Ptr)
+   is
+      pragma Assert (Accumulating_Predicate);
    begin
-      Add (Location_Step, Parsing_Path);
-   end Add;
+      pragma Debug (Ada.Text_IO.Put_Line ("adding predicate"));
+      declare
+         procedure Add_Predicates (Element : in out Location_Steps) is
+         begin
+            Element.Location_Predicates.Append (Predicate);
+         end Add_Predicates;
+      begin
+         Parsing_Path.Path.Update_Element
+           (Position => Parsing_Path.Path.Last,
+            Process => Add_Predicates'Access);
+      end;
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("updated predicates: "
+              & Parsing_Path.Path.Last_Element'Image));
+   end Add_Predicate;
 
-   -------------------------------------------------------------------
+   procedure Begin_Predicate is
+   begin
+      pragma Debug (Ada.Text_IO.Put_Line ("beginning predicate acumulation"));
+      pragma Assert (not Accumulating_Predicate);
+      Accumulating_Predicate := True;
+   end Begin_Predicate;
+
+   procedure End_Predicate
+   is
+      use type Ada.Containers.Count_Type;
+   begin
+      pragma Debug (Ada.Text_IO.Put_Line ("ending predicate accumulation"));
+      pragma Assert (Accumulating_Predicate);
+      Accumulating_Predicate := False;
+   end End_Predicate;
 
    procedure Free (Location_Path : in out Location_Paths) is
       Step : Location_Steps;
    begin
-      for P in 1 .. Positive (Location_Path.Path.Length) loop
-         Step := Location_Path.Path.Element (P);
+      for Step of Location_Path.Path loop
          Predicates.Release (Step.Location_Predicates);
-         Location_Path.Path.Replace_Element (P, Step);
       end loop;
       Location_Path.Path.Clear;
    end Free;
-
-   -------------------------------------------------------------------
 
    function Get_Path return Location_Paths
    is
@@ -91,15 +105,11 @@ package body Mckae.XML.XPath.Locations is
       return Parsing_Path;
    end Get_Path;
 
-   -------------------------------------------------------------------
-
    procedure Reset_For_Parsing
    is
    begin
-      Parsing_Path :=
-        (Steps    => 0,
-         Absolute => False,
-         Path     => <>);
+      Parsing_Path := (Absolute => False,
+                       Path     => <>);
    end Reset_For_Parsing;
 
 end Mckae.XML.XPath.Locations;

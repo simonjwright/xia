@@ -69,17 +69,20 @@ OR    or
 -- Delimiters
 L_PAREN   "("
 R_PAREN   ")"
-L_BRACKET "["
-R_BRACKET "]"
+L_BRACKET_T "["
+--  I want a syntax rule L_Bracket, to manage Predicates
+R_BRACKET_T "]"
+--  I want a syntax rule LRBracket, to manage Predicates
 
 STAR   "*"
 PLUS   "+"
-MINUS   "-"
+MINUS  "-"
 
 DOT   "."
 DOUBLE_DOT   ".."
 SLASH   "/"
-DOUBLE_SLASH   "//"
+DOUBLE_SLASH_T   "//"
+-- I want a syntax rule Double_Slash
 COLON   ":"
 DOUBLE_COLON   "::"
 
@@ -145,7 +148,13 @@ Abbreviated_Step_Base : Node_Test
                     | AT_SIGN Node_Test
                     ;
 
-Predicate            : L_BRACKET Predicate_Expr R_BRACKET
+Predicate            : L_Bracket Predicate_Expr R_Bracket
+                     ;
+
+L_Bracket            : L_BRACKET_T
+                     ;
+
+R_Bracket            : R_BRACKET_T
                      ;
 
 Axis_Specifier       : Axis_Name DOUBLE_COLON
@@ -198,30 +207,35 @@ NCNAME_Or_ID        : NCNAME
 Predicate_Expr       : Expr
                      ;
 
-Abbreviated_Absolute_Location_Path : DOUBLE_SLASH Relative_Location_Path
+Abbreviated_Absolute_Location_Path : Double_Slash Relative_Location_Path
                      ;
 
-Abbreviated_Relative_Location_Path : Relative_Location_Path DOUBLE_SLASH Step
+--  This is a syntax rule, so that it gets processed in-order in the
+--  DFS (tokens aren't).
+Double_Slash         : DOUBLE_SLASH_T
                      ;
 
-Abbreviated_Step     : DOT
-                     | DOUBLE_DOT
+Abbreviated_Relative_Location_Path : Relative_Location_Path Double_Slash Step
                      ;
 
-Expr               : Or_Expr
-                   ;
+Abbreviated_Step    : DOT
+                    | DOUBLE_DOT
+                    ;
 
-Primary_Expr         : Variable_Reference
+Expr                : Or_Expr
+                    ;
+
+Primary_Expr        : Variable_Reference
                     | L_PAREN Expr R_PAREN
                     | LITERAL
                     | Number
                     | Function_Call
                     ;
 
-Variable_Reference   : DOLLAR QName
+Variable_Reference  : DOLLAR QName
                     ;
 
-Function_Call        : Function_Name L_PAREN Arguments R_PAREN
+Function_Call       : Function_Name L_PAREN Arguments R_PAREN
                     ;
 
 Arguments           :

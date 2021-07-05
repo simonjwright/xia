@@ -121,55 +121,55 @@ private
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Absolute_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Relative_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Base_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Base_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -193,7 +193,7 @@ private
    procedure Evaluate_Terminal
      (This         : in     And_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -205,13 +205,13 @@ private
    procedure Evaluate_Terminal
      (This         : in     Argument_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Arguments_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -223,91 +223,91 @@ private
    procedure Evaluate_Terminal
      (This         : in     Arguments_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal10;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal11;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal12;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal13;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal6;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal7;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal8;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal9;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Specifier_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -331,43 +331,43 @@ private
    procedure Evaluate_Terminal
      (This         : in     Expr_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Filter_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Filter_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Function_Call_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Function_Name_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Literal_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Literal_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -409,103 +409,103 @@ private
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal6;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal7;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -523,7 +523,7 @@ private
    procedure Evaluate_Terminal
      (This         : in     Or_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -535,25 +535,25 @@ private
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -565,19 +565,19 @@ private
    procedure Evaluate_Terminal
      (This         : in     Predicate_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Predicates_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Predicates_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -589,7 +589,7 @@ private
    procedure Evaluate_Terminal
      (This         : in     Primary_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -607,25 +607,25 @@ private
    procedure Evaluate_Terminal
      (This         : in     Primary_Expr_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     QName_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     QName_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Relational_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -655,43 +655,43 @@ private
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Base_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Base_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -709,7 +709,7 @@ private
    procedure Evaluate_Terminal
      (This         : in     Union_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Terminal
@@ -721,7 +721,7 @@ private
    procedure Evaluate_Terminal
      (This         : in     Variable_Reference_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    ----------------------------------------
@@ -730,169 +730,169 @@ private
    procedure Evaluate_Parent
      (This         : in     Abbreviated_Step_Base_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Abbreviated_Step_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Absolute_Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Additive_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     And_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Arguments_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Axis_Name_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Equality_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Filter_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Literal_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Multiplicative_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     NCNAME_Or_ID_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Name_Test_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Node_Test_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Node_Type_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Number_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Or_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Path_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Predicates_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Primary_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     QName_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Relational_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Relative_Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Step_Base_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Step_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Unary_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
    procedure Evaluate_Parent
      (This         : in     Union_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    with Inline;
 
 end Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators;

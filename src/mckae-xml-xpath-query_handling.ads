@@ -36,7 +36,7 @@ package Mckae.XML.XPath.Query_Handling is
    use McKae.XML.XPath;
 
    --  Decode the string representation of the location path into its
-   --  components parts
+   --  component parts
    function Pathify (Xpath_Query : Locations.Xpath_String)
                     return Locations.Location_Paths;
 

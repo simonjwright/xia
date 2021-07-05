@@ -10,7 +10,6 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
 
    use Ada.Strings.Unbounded;
    use Xpath_Model;
-   use Ada.Text_IO;
 
    -----------------------------------------------
    --  Useful
@@ -597,14 +596,39 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    end Is_In;
 
    -----------------------------------------------
-   --  Possibly unused
+   -- Debug
+
+   procedure Log (This  : in Xpath_Model.Parseable'Class;
+                  Value : in Expression_Values)
+   is
+   begin
+      null;
+      --  Ada.Text_IO.Put_Line (Ada.Tags.Expanded_Name (This'Tag)
+      --                          & ": value: "
+      --                          & Value'Image);
+   end Log;
+
+   procedure Log (This    : in Xpath_Model.Parseable'Class;
+                  Message :    String;
+                  Value   : in Expression_Values)
+   is
+   begin
+      null;
+      --  Ada.Text_IO.Put_Line (Ada.Tags.Expanded_Name (This'Tag)
+      --                          & ": "
+      --                          & Message
+      --                          & ": value: "
+      --                          & Value'Image);
+   end Log;
+
+   -----------------------------------------------
+   --  Local (see Processing_Instruction)
 
    procedure Evaluate_Terminal (This         : in     Parseable_Token;
                                 Context_Node : in     Node_Items;
                                 Value        :    out Expression_Values)
    is
    begin
-      Put_Line ("Evaluating Token: " & " Parseable_Token");
       Value := (As_Boolean, True);
    end Evaluate_Terminal;
 
@@ -627,6 +651,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Predicate_Path_Nodes :=
         Xia_Worker.Xpath_Query (Context_Node.N, To_String(Value.S));
       Value := (As_Node_List, Predicate_Path_Nodes);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -645,14 +670,15 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Predicate_Path_Nodes :=
         Xia_Worker.Xpath_Query (Context_Node.N, To_String (Value.S));
       Value := (As_Node_List, Predicate_Path_Nodes);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Step_Value : Text_Expression_Values;
+      Step_Value : Expression_Values;
    begin
       Evaluate_Parent
         (Relative_Location_Path_Nonterminal
@@ -665,21 +691,23 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Step_Value);
       Append (Value.S, "/" & Step_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"/";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -688,12 +716,13 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Value.S := "/" & Value.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Absolute_Location_Path_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
@@ -701,24 +730,26 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
            (This.Abbreviated_Absolute_Location_Path_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Step_Nonterminal (This.Step_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Relative_Location_Path_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
@@ -726,14 +757,15 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
            (This.Abbreviated_Relative_Location_Path_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Predicate_Value : Text_Expression_Values;
+      Predicate_Value : Expression_Values;
    begin
       Evaluate_Parent
         (Step_Base_Nonterminal (This.Step_Base_Part.all),
@@ -744,36 +776,39 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Predicate_Value);
       Append (Value.S, Predicate_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Abbreviated_Step_Nonterminal (This.Abbreviated_Step_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This : in Predicates_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        : out Text_Expression_Values)
+      Value        : out Expression_Values)
    is
       pragma Warnings (Off, Value);
    begin
       null;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Predicates_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Predicate_Value : Text_Expression_Values;
+      Predicate_Value : Expression_Values;
    begin
       Evaluate_Parent
         (Predicates_Nonterminal (This.Predicates_Part.all),
@@ -783,14 +818,15 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Predicate_Nonterminal
            (This.Predicate_Part.all), Context_Node, Predicate_Value);
       Append (Value.S, Predicate_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Base_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Node_Test_Value : Text_Expression_Values;
+      Node_Test_Value : Expression_Values;
    begin
       Evaluate_Terminal
         (Axis_Specifier_Nonterminal
@@ -800,36 +836,39 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Node_Test_Value);
       Append (Value.S, Node_Test_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Step_Base_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Abbreviated_Step_Base_Nonterminal (This.Abbreviated_Step_Base_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Base_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Node_Test_Nonterminal (This.Node_Test_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Base_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -837,12 +876,13 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Value.S := "@" & Value.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Predicate_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
@@ -850,12 +890,13 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Value.S := "[" & Value.S & "]";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Specifier_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -863,141 +904,156 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Append (Value.S, "::");
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"ancestor";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"ancestor-or-self";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"attribute";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"child";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"descendant";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal6;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"descendant-or-self";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal7;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"following";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal8;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"following-sibling";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal9;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"namespace";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal10;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"parent";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal11;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"preceding";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal12;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"preceding-sibling";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Axis_Name_Nonterminal13;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"self";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Name_Test_Nonterminal (This.Name_Test_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -1005,14 +1061,15 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Append (Value.S, "()");
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Test_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Literal_Value : Text_Expression_Values;
+      Literal_Value : Expression_Values;
    begin
       Evaluate_Terminal
         (Parseable_Token (This.Processing_Instruction_Part.all),
@@ -1023,69 +1080,76 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Literal_Value);
       Append (Value.S, "(" & Literal_Value.S & ")");
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Comment_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Text_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Processing_Instruction_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Node_Type_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Node_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"*";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Qname_Nonterminal (This.Qname_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Name_Test_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -1093,26 +1157,28 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Append (Value.S, ":*");
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     QName_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (NCName_Or_ID_Nonterminal (This.NCName_Or_ID_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     QName_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Part2_Value : Text_Expression_Values;
+      Part2_Value : Expression_Values;
    begin
       Evaluate_Parent
         (NCName_Or_ID_Nonterminal (This.NCName_Or_ID_Part1.all),
@@ -1123,75 +1189,83 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Part2_Value);
       Append (Value.S, ":" & Part2_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.NCName_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Axis_Name_Nonterminal (This.Axis_Name_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Node_Type_Nonterminal (This.Node_Type_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.And_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Or_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal6;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Mod_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     NCNAME_Or_ID_Nonterminal7;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +This.Div_Part.Token_String.all;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1222,12 +1296,13 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
             end if;
          end if;
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Absolute_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
@@ -1235,14 +1310,15 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Value.S := "//" & Value.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Relative_Location_Path_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Step_Part_Value : Text_Expression_Values;
+      Step_Part_Value : Expression_Values;
    begin
       Evaluate_Parent
         (Relative_Location_Path_Nonterminal (This.Relative_Location_Path_Part.all),
@@ -1253,36 +1329,40 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Step_Part_Value);
       Append (Value.S, "//" & Step_Part_Value.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +".";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Abbreviated_Step_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Value.S := +"..";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Expr_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Or_Expr_Nonterminal (This.Or_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1295,18 +1375,20 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Variable_Reference_Nonterminal (This.Variable_Reference_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Primary_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
         (Expr_Nonterminal (This.Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1314,7 +1396,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Context_Node : in     Node_Items;
       Value        :    out Expression_Values)
    is
-      Result : Text_Expression_Values;
+      Result : Expression_Values;
    begin
       Evaluate_Parent
         (Literal_Nonterminal (This.Literal_Part.all),
@@ -1322,6 +1404,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Result);
       Value := (Value_Type => As_String,
                 S          => Result.S);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1329,7 +1412,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Context_Node : in     Node_Items;
       Value        :    out Expression_Values)
    is
-      Result : Text_Expression_Values;
+      Result : Expression_Values;
    begin
       Evaluate_Parent
         (Number_Nonterminal (This.Number_Part.all),
@@ -1343,38 +1426,41 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Value  := (Value_Type => As_Number,
                     F          => 0.0,
                     Special    => NaN);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Primary_Expr_Nonterminal5;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
         (Function_Call_Nonterminal (This.Function_Call_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Variable_Reference_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Result : Text_Expression_Values;
+      Result : Expression_Values;
    begin
       Evaluate_Parent
         (Qname_Nonterminal (This.Qname_Part.all),
          Context_Node,
          Result);
       Value.S := +This.Dollar_Part.Token_String.all & Result.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Function_Call_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       Function_Name : Unbounded_String;
       Args : Argument_List :=
@@ -1388,16 +1474,18 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
             .NCName_Part.Token_String.all;
 
       Evaluate_Function (-Function_Name, Context_Node, Args, Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Arguments_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       --  Never called by function Evaluate_Parent
       raise Program_Error with "shouldn't be called";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1410,52 +1498,57 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Argument_Nonterminal (This.Argument_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Arguments_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       --  Never called by function Evaluate_Parent
       raise Program_Error with "shouldn't be called";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Argument_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Terminal
         (Expr_Nonterminal (This.Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Function_Name_Nonterminal;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Qname_Nonterminal (This.Qname_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Union_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Path_Expr_Nonterminal (This.Path_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1489,39 +1582,42 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
             end if;
          end loop;
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Location_Path_Nonterminal (This.Location_Path_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Filter_Expr_Nonterminal (This.Filter_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal3;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Filter_Part : Text_Expression_Values;
-      Relative_Location_Path_Part : Text_Expression_Values;
+      Filter_Part : Expression_Values;
+      Relative_Location_Path_Part : Expression_Values;
    begin
       Evaluate_Parent
         (Filter_Expr_Nonterminal (This.Filter_Expr_Part.all),
@@ -1533,15 +1629,16 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Relative_Location_Path_Part);
       Value.S := Filter_Part.S & "/" & Relative_Location_Path_Part.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Path_Expr_Nonterminal4;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Filter_Expr_Part : Text_Expression_Values;
-      Relative_Location_Path_Part : Text_Expression_Values;
+      Filter_Expr_Part : Expression_Values;
+      Relative_Location_Path_Part : Expression_Values;
    begin
       Evaluate_Parent
         (Filter_Expr_Nonterminal (This.Filter_Expr_Part.all),
@@ -1553,27 +1650,29 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Relative_Location_Path_Part);
       Value.S := Filter_Expr_Part.S & "//" & Relative_Location_Path_Part.S;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Filter_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Primary_Expr_Nonterminal (This.Primary_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Filter_Expr_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
-      Filter_Expr_Part : Text_Expression_Values;
-      Predicate_Part : Text_Expression_Values;
+      Filter_Expr_Part : Expression_Values;
+      Predicate_Part : Expression_Values;
    begin
       Evaluate_Parent
         (Filter_Expr_Nonterminal (This.Filter_Expr_Part.all),
@@ -1584,18 +1683,20 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Predicate_Part);
       Value.S := Filter_Expr_Part.S & "[" & Predicate_Part.S & "]";
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Or_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (And_Expr_Nonterminal (This.And_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1622,18 +1723,20 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Value := (Value_Type => As_Boolean,
                    B          => Op1.B or Op2.B);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     And_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Equality_Expr_Nonterminal (This.Equality_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1660,6 +1763,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Value := (Value_Type => As_Boolean,
                    B          => Op1.B and Op2.B);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1672,6 +1776,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Relational_Expr_Nonterminal (This.Relational_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1696,6 +1801,9 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Equal);
       end if;
+      Log (This, "op1", Op1);
+      Log (This, "op2", Op2);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1720,18 +1828,20 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Not_Equal);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Relational_Expr_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
    begin
       Evaluate_Parent
         (Additive_Expr_Nonterminal (This.Additive_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1755,6 +1865,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Less_Than);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1778,6 +1889,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Greater_Than);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1801,6 +1913,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Less_Or_Equal);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1824,6 +1937,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       else
          Value := Expressions.Compare (Op1, Op2, Greater_Or_Equal);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1836,6 +1950,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Multiplicative_Expr_Nonterminal (This.Multiplicative_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1861,6 +1976,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Op2, As_Number);
          Value := Expressions.Compute (Op1, Op2, Expressions.Add);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1886,6 +2002,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Op2, As_Number);
          Value := Expressions.Compute (Op1, Op2, Expressions.Subtract);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1898,6 +2015,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Unary_Expr_Nonterminal (This.Unary_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1923,6 +2041,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Op2, As_Number);
          Value := Expressions.Compute (Op1, Op2, Expressions.Multiply);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1930,7 +2049,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Context_Node : in     Node_Items;
       Value        :    out Expression_Values)
    is
-      Op1, Op2 : Text_Expression_Values;
+      Op1, Op2 : Expression_Values;
    begin
       Evaluate_Parent
         (Multiplicative_Expr_Nonterminal (This.Multiplicative_Expr_Part.all),
@@ -1948,6 +2067,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Op2, As_Number);
          Value := Expressions.Compute (Op1, Op2, Expressions.Divide);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1973,6 +2093,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Op2, As_Number);
          Value := Expressions.Compute (Op1, Op2, Expressions.Modulo);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1985,6 +2106,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
         (Union_Expr_Nonterminal (This.Union_Expr_Part.all),
          Context_Node,
          Value);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -2004,6 +2126,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Coerce (Value, As_Number);
          Value := Expressions.Compute (Value, Value, Expressions.Negate);
       end if;
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -2022,6 +2145,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Value  := (Value_Type => As_Number,
                     F          => 0.0,
                     Special    => NaN);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -2040,24 +2164,29 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Value  := (Value_Type => As_Number,
                     F          => 0.0,
                     Special    => NaN);
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Literal_Nonterminal1;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
+      Quoted : constant String := This.DQ_Literal_Part.Token_String.all;
    begin
-      Value.S := +This.DQ_Literal_Part.Token_String.all;
+      Value.S := +(Quoted (Quoted'First + 1 .. Quoted'Last - 1));
+      Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
      (This         : in     Literal_Nonterminal2;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
+      Quoted : constant String := This.SQ_Literal_Part.Token_String.all;
    begin
-      Value.S := +This.SQ_Literal_Part.Token_String.all;
+      Value.S := +(Quoted (Quoted'First + 1 .. Quoted'Last - 1));
+      Log (This, Value);
    end Evaluate_Terminal;
 
    ----------------------------------------
@@ -2066,7 +2195,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Abbreviated_Step_Base_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2089,7 +2218,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Abbreviated_Step_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2112,7 +2241,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Absolute_Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2140,7 +2269,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Additive_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2168,7 +2297,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     And_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2191,7 +2320,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Arguments_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2219,7 +2348,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Axis_Name_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2297,7 +2426,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Equality_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2325,7 +2454,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Filter_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2348,7 +2477,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Literal_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2371,7 +2500,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2394,7 +2523,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Multiplicative_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2427,7 +2556,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     NCNAME_Or_ID_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2475,7 +2604,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Name_Test_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2503,7 +2632,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Node_Test_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2531,7 +2660,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Node_Type_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2564,7 +2693,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Number_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2587,7 +2716,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Or_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2610,7 +2739,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Path_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2643,7 +2772,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Predicates_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2666,7 +2795,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Primary_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2704,7 +2833,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     QName_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2727,7 +2856,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Relational_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2765,7 +2894,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Relative_Location_Path_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2793,7 +2922,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Step_Base_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2816,7 +2945,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Step_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2839,7 +2968,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Unary_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin
@@ -2862,7 +2991,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    procedure Evaluate_Parent
      (This         : in     Union_Expr_Nonterminal'Class;
       Context_Node : in     Node_Items;
-      Value        :    out Text_Expression_Values)
+      Value        :    out Expression_Values)
    is
       use Ada.Tags;
    begin

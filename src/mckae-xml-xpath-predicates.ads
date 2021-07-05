@@ -28,47 +28,35 @@
 -- (http://www.mckae.com).                                            --
 ------------------------------------------------------------------------
 
+with Ada.Containers.Vectors;
 with Xpath_Model;
-
-private with Ada.Containers.Vectors;
 
 package McKae.XML.XPath.Predicates is
 
-   -- Handle to the predicate content
-   type Predicate_Handles is private;
+   package Predicates_List_Package is new Ada.Containers.Vectors
+     (Index_Type   => Positive,
+      Element_Type => Xpath_Model.Parseable_Ptr,
+      "="          => Xpath_Model."=");
 
-   --  Add the pointer to the root node of a parse subtree that was
+   subtype Predicate_List is Predicates_List_Package.Vector;
+
+   Null_Predicate : constant Predicate_List
+     := Predicates_List_Package.Empty_Vector;
+
+    --  Add the pointer to the root node of a parse subtree that was
    --  created for a predicate
    procedure Add_Predicate_Parse
-     (Handle : in out Predicate_Handles;
-      T      : in     not null Xpath_Model.Parseable_Ptr);
-
-   -- Null instances of a predicate definition
-   Null_Predicate : constant Predicate_Handles;
+     (L : in out Predicate_List;
+      T : in     not null Xpath_Model.Parseable_Ptr);
 
    --  Release the contents of a predicate handle (which may consist
    --  of one or more individual predicate definitions).  Note that
    --  this does _not_ release the associated parse subtree associated
    --  with each predicate instance.
-   procedure Release (Handle : in out Predicate_Handles);
+   procedure Release (L : in out Predicate_List);
 
    Malformed_Predicate : exception;
    --  Raised when a supplied query predicate does not conform to
    --  predicate syntax
-
-private
-   function "=" (L, R : Xpath_Model.Parseable_Ptr) return Boolean
-     renames Xpath_Model."=";
-
-   package Predicate_Handle_Pkg is new Ada.Containers.Vectors
-     (Index_Type => Positive,
-      Element_Type => Xpath_Model.Parseable_Ptr);
-
-   type Predicate_Handles is record
-      Predicate_List : Predicate_Handle_Pkg.Vector;
-   end record;
-
-   Null_Predicate : constant Predicate_Handles
-     := (Predicate_List => Predicate_Handle_Pkg.Empty_Vector);
 
 end McKae.XML.XPath.Predicates;

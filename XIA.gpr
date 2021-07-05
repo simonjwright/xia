@@ -25,6 +25,7 @@ project XIA is
    package Builder is
       for Global_Compilation_Switches ("ada") use
         (
+         "-gnatX",
          "-g",
          "-j2"
         );
@@ -34,7 +35,6 @@ project XIA is
       for Default_Switches ("ada") use
         (
          "-gnatqQf",
-         "-gnata",
          "-O0"
         );
    end Compiler;

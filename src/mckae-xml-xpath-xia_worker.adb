@@ -144,7 +144,7 @@ package body Mckae.XML.XPath.XIA_Worker is
                            Ls : Location_Steps)
                           return Boolean is
 
-      use type Predicates.Predicate_Handles;
+      use type Predicates.Predicate_List;
 
       NT    : Node_Test_Specification := Ls.Node_Test;
       Match : Boolean := False;
@@ -504,7 +504,7 @@ package body Mckae.XML.XPath.XIA_Worker is
       Cursor        : Node_Sets.Cursor := Matchings.First;
 
       use type Node_Sets.Cursor;
-      use type Predicates.Predicate_Handles;
+      use type Predicates.Predicate_List;
 
    begin
       -- Iterate through the current set of matchings, evaluating each
@@ -551,21 +551,22 @@ package body Mckae.XML.XPath.XIA_Worker is
      (XPath     : in     String;
       Matchings : in out Node_Sets.Set)
    is
-      Query : String := Trim(XPath, Both);
+      Query : String := Trim (XPath, Both);
 
       Location_Steps : Location_Paths;
 
    begin
       -- Split up the location path into discrete steps
-      Location_Steps := Query_Handling.Pathify(Query);
+      Location_Steps := Query_Handling.Pathify (Query);
 
-      for S in 1 .. Location_Steps.Steps loop
-         Extract_Nodes(Location_Steps.Path(S), Matchings);
+      for P of Location_Steps.Path loop
+
+         Extract_Nodes (P, Matchings);
 
          exit when Matchings.Is_Empty;
       end loop;
 
-      Free(Location_Steps);
+      Free (Location_Steps);
 
    exception
       when Query_Handling.Malformed_Query =>
@@ -691,7 +692,7 @@ package body Mckae.XML.XPath.XIA_Worker is
 
       Start : Natural := 1;
       Split : Natural := 1;
-      Query : String := Trim(XPath, Both);
+      Query : String := Trim (XPath, Both);
 
       Matchings : Node_Sets.Set;
       Total_Matchings : Node_Sets.Set;
@@ -704,7 +705,7 @@ package body Mckae.XML.XPath.XIA_Worker is
          --  within a document.
          Starting_Node := N;
 
-         if Query(Start) = '/' then
+         if Query (Start) = '/' then
             Starting_Node := Owner_Document(N);
          end if;
 
@@ -712,17 +713,17 @@ package body Mckae.XML.XPath.XIA_Worker is
             raise Inappropriate_Node;
          end if;
 
-         Matchings.Append((Self_Axis, Starting_Node));
+         Matchings.Append ((Self_Axis, Starting_Node));
 
-         -- Process this as a concatenation of queries, i.e.,
+         --  Process this as a concatenation of queries, i.e.,
          --  different queries separated by '|'.  Watch out for '|'s
          --  embedded in predicates!
-         Split := Query_Separator_Index(Query(Start .. Query'Last));
+         Split := Query_Separator_Index (Query (Start .. Query'Last));
 
          if Split = 0 then
-            Evaluate_Location_Path(Query(Start .. Query'Last), Matchings);
+            Evaluate_Location_Path (Query (Start .. Query'Last), Matchings);
          else
-            Evaluate_Location_Path(Query(Start .. Split - 1), Matchings);
+            Evaluate_Location_Path (Query (Start .. Split - 1), Matchings);
          end if;
 
          -- Merge the distinct sets

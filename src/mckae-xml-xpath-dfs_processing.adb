@@ -77,48 +77,32 @@ package body McKae.XML.XPath.DFS_Processing is
    function Get_Literal (This : Literal_Nonterminal'Class)
                         return Unbounded_String is
       use Ada.Tags;
+      Quoted : constant String :=
+        (if This'Tag = Literal_Nonterminal1'Tag then
+            Literal_Nonterminal1(This).DQ_Literal_Part.Token_String.all
+         elsif This'Tag = Literal_Nonterminal2'Tag then
+            Literal_Nonterminal2(This).SQ_Literal_Part.Token_String.all
+         else
+            raise  Constraint_Error
+              with Expanded_Name (This'Tag) & " not a Literal tag");
    begin
       return
-        +(if This'Tag = Literal_Nonterminal1'Tag then
-             Literal_Nonterminal1(This).DQ_Literal_Part.Token_String.all
-          elsif This'Tag = Literal_Nonterminal2'Tag then
-             Literal_Nonterminal2(This).SQ_Literal_Part.Token_String.all
-          else
-             raise  Constraint_Error
-               with Expanded_Name (This'Tag) & " not a Literal tag");
+        +(Quoted (Quoted'First + 1 .. Quoted'Last - 1));
    end Get_Literal;
 
    Star : constant Unbounded_String := To_Unbounded_String("*");
 
    -- Location step under construction
-   New_Location_Step : Location_Steps;
-
-   procedure Set_Location_Step (Step : Location_Steps) is
-   begin
-      Ada.Text_IO.Put_Line ("setting step " & Step.Node_Test.Node_Test'Image);
-      New_Location_Step := Step;
-   end Set_Location_Step;
-
-   procedure Change_Location_Step (Step : Location_Steps) is
-   begin
-      Ada.Text_IO.Put_Line
-        ("changing step "
-           & New_Location_Step.Node_Test.Node_Test'Image
-           & " to "
-           & Step.Node_Test.Node_Test'Image);
-      New_Location_Step := Step;
-   end Change_Location_Step;
-
-   function Get_Location_Step return Location_Steps is (New_Location_Step);
+   Location_Step : Location_Steps;
 
    -- Rely on the initialization to set establish this as an empty step
    Empty_Location_Step : Location_Steps;
 
    procedure Reset is
    begin
-      Predicates.Release (New_Location_Step.Location_Predicates);
-      New_Location_Step := Empty_Location_Step;
-      Ada.Text_IO.Put_Line ("resetting");
+      Predicates.Release (Location_Step.Location_Predicates);
+      Location_Step := Empty_Location_Step;
+      pragma Debug (Ada.Text_IO.Put_Line ("resetting"));
    end Reset;
 
    procedure Visit_Parseable_Token
@@ -456,36 +440,38 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Abbreviated_Step_Nonterminal1'Class) is
    begin
-      Set_Location_Step ((Axis                => Self_Axis,
-                          Node_Test           => (Node_Test => Node_Node_Test,
-                                                  Name      => Star),
-                          Location_Predicates => Predicates.Null_Predicate,
-                          Output_Step         => False));
+      Location_Step := (Axis                => Self_Axis,
+                        Node_Test           => (Node_Test => Node_Node_Test,
+                                                Name      => Star),
+                        Location_Predicates => Predicates.Null_Predicate,
+                        Output_Step         => False);
    end After_Abbreviated_Step_Nonterminal1;
 
    procedure After_Abbreviated_Step_Nonterminal2
      (I : access DFS;
       T : access Abbreviated_Step_Nonterminal2'Class) is
    begin
-      Set_Location_Step ((Axis                => Parent_Axis,
-                          Node_Test           => (Node_Test => Node_Node_Test,
-                                                  Name      => Star),
-                          Location_Predicates => Predicates.Null_Predicate,
-                          Output_Step         => False));
+      Location_Step := (Axis                => Parent_Axis,
+                        Node_Test           => (Node_Test => Node_Node_Test,
+                                                Name      => Star),
+                        Location_Predicates => Predicates.Null_Predicate,
+                        Output_Step         => False);
    end After_Abbreviated_Step_Nonterminal2;
 
+   --  XXXX not sure this shouldn't be Before?
+   --  XXXX This is definitely wrong!
    procedure After_Abbreviated_Relative_Location_Path_Nonterminal
      (I : access DFS;
       T : access Abbreviated_Relative_Location_Path_Nonterminal'Class) is
    begin
       --  Pathify(This.Relative_Location_Path_Part.all); XXXX
-      Add (Get_Location_Step);
+      --  Add (Get_Location_Step);
       Add ((Axis                => Descendant_Or_Self_Axis,
             Node_Test           => (Node_Test => Node_Node_Test,
                                     Name      => Star),
             Location_Predicates => Predicates.Null_Predicate,
             Output_Step         => False));
-      Reset;
+      --  Reset;
       --  Pathify(This.Step_Part.all); XXXX
    end After_Abbreviated_Relative_Location_Path_Nonterminal;
 
@@ -493,123 +479,106 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Abbreviated_Absolute_Location_Path_Nonterminal'Class) is
    begin
-      --  The "//" part
+      null;
+   end After_Abbreviated_Absolute_Location_Path_Nonterminal;
+
+   procedure After_Double_Slash_nonterminal
+     (I : access DFS;
+      T : access Double_Slash_Nonterminal'Class) is
+   begin
       Add ((Axis                => Descendant_Or_Self_Axis,
             Node_Test           => (Node_Test => Node_Node_Test,
                                     Name      => Star),
             Location_Predicates => Predicates.Null_Predicate,
             Output_Step         => False));
-      Reset;
-      --  Pathify(This.Relative_Location_Path_Part.all); XXXX
-   end After_Abbreviated_Absolute_Location_Path_Nonterminal;
+   end After_Double_Slash_nonterminal;
 
    procedure After_Predicate_Expr_Nonterminal
      (I : access DFS;
       T : access Predicate_Expr_Nonterminal'Class) is
    begin
-      null;
+      Add_Predicate (T.Expr_Part);
    end After_Predicate_Expr_Nonterminal;
 
    procedure After_NCNAME_Or_ID_Nonterminal1
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test :=
         (Node_Test => QName_Node_Test,
          Name      => +T.NCName_Part.Token_String.all,
          Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal1;
 
    procedure After_NCNAME_Or_ID_Nonterminal2
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal2'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test :=
         (Node_Test => QName_Node_Test,
          Name      => Get_Axis_Name (T.Axis_Name_Part.all),
          Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal2;
 
    procedure After_NCNAME_Or_ID_Nonterminal3
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal3'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test :=
         (Node_Test => QName_Node_Test,
          Name      => Get_Node_Type_Name (T.Node_Type_Part.all),
          Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal3;
 
    procedure After_NCNAME_Or_ID_Nonterminal4
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal4'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.And_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal4;
 
    procedure After_NCNAME_Or_ID_Nonterminal5
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal5'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Or_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal5;
 
    procedure After_NCNAME_Or_ID_Nonterminal6
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal6'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Mod_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal6;
 
    procedure After_NCNAME_Or_ID_Nonterminal7
      (I : access DFS;
       T : access NCNAME_Or_ID_Nonterminal7'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Div_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_NCNAME_Or_ID_Nonterminal7;
 
    procedure After_QName_Nonterminal1
      (I : access DFS;
       T : access QName_Nonterminal1'Class) is
    begin
+      --  Rule is NCNAME_Or_ID
       null;
    end After_QName_Nonterminal1;
 
    procedure After_QName_Nonterminal2
      (I : access DFS;
       T : access QName_Nonterminal2'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
+      --  Rule is NCNAME_Or_ID COLON NCNAME_Or_ID
       --  XXX we assume here that the names are actually just that,
       --  not e.g. 'or'.
       Location_Step.Node_Test :=
@@ -618,23 +587,21 @@ package body McKae.XML.XPath.DFS_Processing is
            (T.NCName_Or_ID_Part2.all).NCName_Part.Token_String.all,
          Prefix    => +NCNAME_Or_ID_Nonterminal1
            (T.NCName_Or_ID_Part1.all).NCName_Part.Token_String.all);
-      Change_Location_Step (Location_Step);
    end After_QName_Nonterminal2;
 
    procedure After_Name_Test_Nonterminal1
      (I : access DFS;
       T : access Name_Test_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
+      --  Rule is STAR
       Location_Step.Node_Test.Name := Star;
-      Change_Location_Step (Location_Step);
    end After_Name_Test_Nonterminal1;
 
    procedure After_Name_Test_Nonterminal2
      (I : access DFS;
       T : access Name_Test_Nonterminal2'Class) is
    begin
+      --  Rule is Qname
       null;
    end After_Name_Test_Nonterminal2;
 
@@ -642,91 +609,76 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Name_Test_Nonterminal3'Class) is
    begin
+      --  Rule is NCNAME_Or_ID COLON STAR
       null;
    end After_Name_Test_Nonterminal3;
 
    procedure After_Node_Type_Nonterminal1
      (I : access DFS;
       T : access Node_Type_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => Comment_Node_Test,
                                   Name      => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_Node_Type_Nonterminal1;
 
    procedure After_Node_Type_Nonterminal2
      (I : access DFS;
       T : access Node_Type_Nonterminal2'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => Text_Node_Test,
                                   Name      => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_Node_Type_Nonterminal2;
 
    procedure After_Node_Type_Nonterminal3
      (I : access DFS;
       T : access Node_Type_Nonterminal3'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => Processing_Instruction_Node_Test,
                                   Name      => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_Node_Type_Nonterminal3;
 
    procedure After_Node_Type_Nonterminal4
      (I : access DFS;
       T : access Node_Type_Nonterminal4'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Node_Test := (Node_Test => Node_Node_Test,
                                   Name      => Null_Unbounded_String);
-      Change_Location_Step (Location_Step);
    end After_Node_Type_Nonterminal4;
 
    procedure After_Node_Test_Nonterminal1
      (I : access DFS;
       T : access Node_Test_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
-      Location_Step.Node_Test := (Node_Test => NCName_Node_Test,
-                                  Name      => Null_Unbounded_String); -- Set vi
-      Change_Location_Step (Location_Step);
+      --  Rule is Name_Test
+      --  Change the test type, keep the name
+      Location_Step.Node_Test :=
+        (Node_Test => NCName_Node_Test,
+         Name      => Location_Step.Node_Test.Name);
    end After_Node_Test_Nonterminal1;
 
    procedure After_Node_Test_Nonterminal2
      (I : access DFS;
       T : access Node_Test_Nonterminal2'Class) is
    begin
+      --  Rule is Node_Type L_PAREN R_PAREN
       null;
    end After_Node_Test_Nonterminal2;
 
    procedure After_Node_Test_Nonterminal3
      (I : access DFS;
       T : access Node_Test_Nonterminal3'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
+      --  Rule is PROCESSING_INSTRUCTION L_PAREN LITERAL R_PAREN
       Location_Step.Node_Test :=
         (Node_Test => Processing_Instruction_Node_Test,
-         Name      => Get_Literal(T.Literal_Part.all));
-      Change_Location_Step (Location_Step);
+         Name      => Get_Literal (T.Literal_Part.all));
    end After_Node_Test_Nonterminal3;
 
    procedure After_Axis_Name_Nonterminal1
      (I : access DFS;
       T : access Axis_Name_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Ancestor_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal1;
 
    procedure After_Axis_Name_Nonterminal2
@@ -734,19 +686,14 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Axis_Name_Nonterminal2'Class) is
       Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Ancestor_Or_Self_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal2;
 
    procedure After_Axis_Name_Nonterminal3
      (I : access DFS;
       T : access Axis_Name_Nonterminal3'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Attribute_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal3;
 
    procedure After_Axis_Name_Nonterminal4
@@ -759,91 +706,64 @@ package body McKae.XML.XPath.DFS_Processing is
    procedure After_Axis_Name_Nonterminal5
      (I : access DFS;
       T : access Axis_Name_Nonterminal5'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Descendant_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal5;
 
    procedure After_Axis_Name_Nonterminal6
      (I : access DFS;
       T : access Axis_Name_Nonterminal6'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Descendant_Or_Self_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal6;
 
    procedure After_Axis_Name_Nonterminal7
      (I : access DFS;
       T : access Axis_Name_Nonterminal7'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Following_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal7;
 
    procedure After_Axis_Name_Nonterminal8
      (I : access DFS;
       T : access Axis_Name_Nonterminal8'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Following_Sibling_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal8;
 
    procedure After_Axis_Name_Nonterminal9
      (I : access DFS;
       T : access Axis_Name_Nonterminal9'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Namespace_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal9;
 
    procedure After_Axis_Name_Nonterminal10
      (I : access DFS;
       T : access Axis_Name_Nonterminal10'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Parent_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal10;
 
    procedure After_Axis_Name_Nonterminal11
      (I : access DFS;
       T : access Axis_Name_Nonterminal11'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Preceding_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal11;
 
    procedure After_Axis_Name_Nonterminal12
      (I : access DFS;
       T : access Axis_Name_Nonterminal12'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Preceding_Sibling_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal12;
 
    procedure After_Axis_Name_Nonterminal13
      (I : access DFS;
       T : access Axis_Name_Nonterminal13'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Self_Axis;
-      Change_Location_Step (Location_Step);
    end After_Axis_Name_Nonterminal13;
 
    procedure After_Axis_Specifier_Nonterminal
@@ -858,51 +778,47 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Predicate_Nonterminal'Class) is
    begin
       Predicates.Add_Predicate_Parse
-        (New_Location_Step.Location_Predicates,
+        (Location_Step.Location_Predicates,
          T.Predicate_Expr_Part.Expr_Part);
    end After_Predicate_Nonterminal;
 
    procedure After_Abbreviated_Step_Base_Nonterminal1
      (I : access DFS;
       T : access Abbreviated_Step_Base_Nonterminal1'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Child_Axis;
-      Change_Location_Step (Location_Step);
    end After_Abbreviated_Step_Base_Nonterminal1;
 
    procedure After_Abbreviated_Step_Base_Nonterminal2
      (I : access DFS;
       T : access Abbreviated_Step_Base_Nonterminal2'Class) is
-      Location_Step : Location_Steps;
    begin
-      Location_Step := Get_Location_Step;
       Location_Step.Axis := Attribute_Axis;
-      Change_Location_Step (Location_Step);
    end After_Abbreviated_Step_Base_Nonterminal2;
 
    procedure After_Step_Base_Nonterminal1
      (I : access DFS;
       T : access Step_Base_Nonterminal1'Class) is
    begin
-      --  Pathify(This.Axis_Specifier_Part.all);
-      --  Pathify(This.Node_Test_Part.all);
-      null;
+      --  The rule is Axis_Specifier Node_Test.
+      Add (Location_Step);
+      Reset;
    end After_Step_Base_Nonterminal1;
 
    procedure After_Step_Base_Nonterminal2
      (I : access DFS;
       T : access Step_Base_Nonterminal2'Class) is
    begin
-      --  Pathify(This.Abbreviated_Step_Base_Part.all);
-      null;
+      --  The rule is Abbreviated_Step_Base.
+      Add (Location_Step);
+      Reset;
    end After_Step_Base_Nonterminal2;
 
    procedure After_Predicates_Nonterminal1
      (I : access DFS;
       T : access Predicates_Nonterminal1'Class) is
    begin
+      --  The rule is empty.
       null;
    end After_Predicates_Nonterminal1;
 
@@ -910,17 +826,29 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Predicates_Nonterminal2'Class) is
    begin
-      --  Pathify(This.Predicates_Part.all);
-      --  Pathify(This.Predicate_Part.all);
+      --  The rule is Predicates Predicate.
       null;
    end After_Predicates_Nonterminal2;
+
+   procedure After_L_Bracket_Nonterminal
+     (I : access DFS;
+      T : access L_Bracket_Nonterminal'Class) is
+   begin
+      Begin_Predicate;
+   end After_L_Bracket_Nonterminal;
+
+   procedure After_R_Bracket_Nonterminal
+     (I : access DFS;
+      T : access R_Bracket_Nonterminal'Class) is
+   begin
+      End_Predicate;
+   end After_R_Bracket_Nonterminal;
 
    procedure After_Step_Nonterminal1
      (I : access DFS;
       T : access Step_Nonterminal1'Class) is
    begin
-      --  Pathify(This.Step_Base_Part.all);
-      --  Pathify(This.Predicates_Part.all);
+      --  The rule is Step_Base Predicates; Step_Base adds itself.
       null;
    end After_Step_Nonterminal1;
 
@@ -928,28 +856,23 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Step_Nonterminal2'Class) is
    begin
-      --  Pathify(This.Abbreviated_Step_Part.all);
-      null;
+      --  The rule is Abbreviated_Step.
+      Add (Location_Step);
+      Reset;
    end After_Step_Nonterminal2;
 
    procedure After_Relative_Location_Path_Nonterminal1
      (I : access DFS;
       T : access Relative_Location_Path_Nonterminal1'Class) is
    begin
-      --  Pathify(This.Step_Part.all);
-      null;
+        null;
    end After_Relative_Location_Path_Nonterminal1;
 
    procedure After_Relative_Location_Path_Nonterminal2
      (I : access DFS;
       T : access Relative_Location_Path_Nonterminal2'Class) is
    begin
-      --  An initial relative location is included here, process it,
-      --  add the step, then work on the next step part
-      --  Pathify(This.Relative_Location_Path_Part.all);
-      Add (Get_Location_Step);
-      Reset;
-      --  Pathify(This.Step_Part.all);
+      null;
    end After_Relative_Location_Path_Nonterminal2;
 
    procedure After_Relative_Location_Path_Nonterminal3
@@ -964,27 +887,33 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Absolute_Location_Path_Nonterminal1'Class) is
    begin
-      Set_Location_Step
-        ((Axis                => Self_Axis,
-          Node_Test           => (Node_Test => Node_Node_Test,
-                                  Name      => Null_Unbounded_String),
-          Location_Predicates => Predicates.Null_Predicate,
-          Output_Step         => False));
+      --  Rule is SLASH
+      Location_Step :=
+        (Axis                => Self_Axis,
+         Node_Test           => (Node_Test => Node_Node_Test,
+                                 Name      => Null_Unbounded_String),
+         Location_Predicates => Predicates.Null_Predicate,
+         Output_Step         => False);
    end After_Absolute_Location_Path_Nonterminal1;
 
    procedure After_Absolute_Location_Path_Nonterminal2
      (I : access DFS;
       T : access Absolute_Location_Path_Nonterminal2'Class) is
    begin
-      --  Pathify(This.Relative_Location_Path_Part.all);
-      null;
+      --  Rule is SLASH Relative_Location_Path
+      Location_Step :=
+        (Axis                => Self_Axis,
+         Node_Test           => (Node_Test => Node_Node_Test,
+                                 Name      => Null_Unbounded_String),
+         Location_Predicates => Predicates.Null_Predicate,
+         Output_Step         => False);
    end After_Absolute_Location_Path_Nonterminal2;
 
    procedure After_Absolute_Location_Path_Nonterminal3
      (I : access DFS;
       T : access Absolute_Location_Path_Nonterminal3'Class) is
    begin
-      --  Pathify(This.Abbreviated_Absolute_Location_Path_Part.all);
+      --  Rule is Abbreviated_Absolute_Location_Path
       null;
    end After_Absolute_Location_Path_Nonterminal3;
 
@@ -992,18 +921,16 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Location_Path_Nonterminal1'Class) is
    begin
-      --  Pathify(This.Relative_Location_Path_Part.all);
-      Add (Get_Location_Step);
-      Reset;
+      --  Rule is Relative_Location_Path
+      null;
    end After_Location_Path_Nonterminal1;
 
    procedure After_Location_Path_Nonterminal2
      (I : access DFS;
       T : access Location_Path_Nonterminal2'Class) is
    begin
-      --  Pathify(This.Absolute_Location_Path_Part.all);
-      Add (Get_Location_Step);
-      Reset;
+      --  Rule is Absolute_Location_Path
+      null;
    end After_Location_Path_Nonterminal2;
 
 end McKae.XML.XPath.DFS_Processing;

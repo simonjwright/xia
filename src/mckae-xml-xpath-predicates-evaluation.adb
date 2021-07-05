@@ -33,7 +33,7 @@ with Mckae.XML.XPath.Expressions;
 with Mckae.XML.XPath.Predicates.Evaluation.Evaluators;
 with Xpath_Model;
 
-with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Text_IO;
 
 package body McKae.XML.XPath.Predicates.Evaluation is
 
@@ -41,9 +41,9 @@ package body McKae.XML.XPath.Predicates.Evaluation is
    use Xpath_Model;
 
    procedure Evaluate_Predicate (Nodes            : in out Node_Sets.Set;
-                                 Handle           : in     Predicate_Handles;
-                                 Originating_Axis : in     Locations.Axes) is
-
+                                 Predicates       : in     Predicate_List;
+                                 Originating_Axis : in     Locations.Axes)
+   is
       use Mckae.XML.XPath;
 
       Cursor             : Node_Sets.Cursor;
@@ -52,50 +52,51 @@ package body McKae.XML.XPath.Predicates.Evaluation is
       Node_Item_Position : Natural := 0;
       Node_Item          : Expressions.Node_Items;
 
-      Expression : Expressions.Expression_Values;
-      Predicate_Count : constant Natural :=
-        Natural (Handle.Predicate_List.Length);
-
-      Filtered_Nodes : Node_Sets.Set;
-
       use type Node_Sets.Cursor;
 
    begin
-      if Predicate_Count >= 1 then
-         for P in 1 .. Predicate_Count loop
+      for Predicate of Predicates loop
+         declare
+            Filtered_Nodes : Node_Sets.Set;
+         begin
             Node_Item_Index := 1;
             Node_Set_Size   := Natural (Nodes.Length);
             Cursor := Nodes.First;
 
             while Cursor /= Node_Sets.No_Element loop
-               if Locations.Forward_Axis (Originating_Axis) then
-                  Node_Item_Position := Node_Item_Index;
-               else
-                  pragma Assert (Locations.Reverse_Axis (Originating_Axis));
-                  Node_Item_Position := (Node_Set_Size - Node_Item_Index) + 1;
-               end if;
+               declare
+                  Expression : Expressions.Expression_Values;
+               begin
+                  if Locations.Forward_Axis (Originating_Axis) then
+                     Node_Item_Position := Node_Item_Index;
+                  else
+                     pragma Assert
+                       (Locations.Reverse_Axis (Originating_Axis));
+                     Node_Item_Position :=
+                       (Node_Set_Size - Node_Item_Index) + 1;
+                  end if;
 
-               Node_Item :=
-                 (N             =>
-                    Node_Sets.Element (Cursor).Matching_Node,
-                  Node_Position => Node_Item_Position,
-                  Node_Set_Size => Node_Set_Size);
-               Evaluators.Evaluate (Handle.Predicate_List.Element (P).all,
-                                    Node_Item,
-                                    Expression);
-               Expressions.Coerce (Expression, Expressions.As_Boolean);
+                  Node_Item :=
+                    (N             =>
+                       Node_Sets.Element (Cursor).Matching_Node,
+                     Node_Position => Node_Item_Position,
+                     Node_Set_Size => Node_Set_Size);
+                  Evaluators.Evaluate (Predicate.all,
+                                       Node_Item,
+                                       Expression);
+                  Expressions.Coerce (Expression, Expressions.As_Boolean);
 
-               if Expression.B then
-                  Filtered_Nodes.Append (Node_Sets.Element (Cursor));
-               end if;
+                  if Expression.B then
+                     Filtered_Nodes.Append (Node_Sets.Element (Cursor));
+                  end if;
 
-               Node_Sets.Next (Cursor);
-               Node_Item_Index := Node_Item_Index + 1;
+                  Node_Sets.Next (Cursor);
+                  Node_Item_Index := Node_Item_Index + 1;
+               end;
             end loop;
             Nodes := Filtered_Nodes;
-            Filtered_Nodes.Clear;
-         end loop;
-      end if;
+         end;
+      end loop;
 
    exception
       when Expressions.Invalid_Coercion
