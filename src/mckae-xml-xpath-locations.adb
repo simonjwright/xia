@@ -42,14 +42,23 @@ package body Mckae.XML.XPath.Locations is
 
    procedure Add (Location_Step : in Location_Steps)
    is
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("adding step: " & Location_Step'Image));
+      pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
+      Step : Location_Steps := Location_Step;
    begin
-      if not Accumulating_Predicate
-      then
+      if not Step.Location_Predicates.Is_Empty then
          pragma Debug
-           (Ada.Text_IO.Put_Line ("step: " & Location_Step'Image));
-         pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
-
-         Parsing_Path.Path.Append (Location_Step);
+           (Ada.Text_IO.Put_Line ("! suppressing predicates"));
+         Step.Location_Predicates.Clear;
+      end if;
+      if Accumulating_Predicate
+      then
+         null;
+         pragma Debug
+           (Ada.Text_IO.Put_Line (".. skipping"));
+      else
+         Parsing_Path.Path.Append (Step);
       end if;
    end Add;
 

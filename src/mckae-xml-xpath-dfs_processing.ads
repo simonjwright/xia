@@ -46,6 +46,13 @@ private with Location_Path_Model;
 
 package McKae.XML.XPath.DFS_Processing is
 
+   --  A Predicate may include Location_Paths, which are treated via a
+   --  recursive call to Xia_Worker.Xpath_Query during
+   --  evaluation. These procedures preserve the parse state over such
+   --  a recursive call.
+   procedure Push_Parse_State;
+   procedure Pop_Parse_State;
+
    type DFS is new Xpath_DFS.DFS with null record;
 
 private

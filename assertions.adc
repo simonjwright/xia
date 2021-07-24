@@ -1,0 +1,10 @@
+--  -*- mode: ada -*-
+pragma Assertion_Policy (Assert => Check);
+pragma Assertion_Policy (Static_Predicate => Check);
+pragma Assertion_Policy (Dynamic_Predicate => Check);
+pragma Assertion_Policy (Pre => Check);
+pragma Assertion_Policy (Pre'Class => Check);
+pragma Assertion_Policy (Post => Check);
+pragma Assertion_Policy (Post'Class => Check);
+pragma Assertion_Policy (Type_Invariant => Check);
+pragma Assertion_Policy (Type_Invariant'Class => Check);

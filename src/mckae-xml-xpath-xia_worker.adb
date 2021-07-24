@@ -37,6 +37,7 @@ use  Ada.Strings.Unbounded;
 with Dom.Core.Append_Node;
 with Dom.Core.Nodes;
 
+with McKae.XML.XPath.DFS_Processing;
 with Mckae.Xml.Xpath.Locations;
 use  Mckae.Xml.Xpath.Locations;
 with Mckae.Xml.Xpath.Node_Sets;
@@ -46,6 +47,8 @@ with McKae.XML.XPath.Query_Handling;
 
 with Xpath_Model;
 with Xpath_Parser;
+
+with Ada.Text_IO;
 
 package body Mckae.XML.XPath.XIA_Worker is
 
@@ -559,6 +562,9 @@ package body Mckae.XML.XPath.XIA_Worker is
       -- Split up the location path into discrete steps
       Location_Steps := Query_Handling.Pathify (Query);
 
+      pragma Debug
+        (Ada.Text_IO.Put_Line (Location_Steps'Image));
+
       for P of Location_Steps.Path loop
 
          Extract_Nodes (P, Matchings);
@@ -698,7 +704,11 @@ package body Mckae.XML.XPath.XIA_Worker is
       Total_Matchings : Node_Sets.Set;
 
    begin
+      McKae.XML.XPath.DFS_Processing.Push_Parse_State;
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("q: " & XPath));
       loop
+
          Matchings.Clear;
 
          -- The given node is either a document node or an element node
@@ -738,6 +748,7 @@ package body Mckae.XML.XPath.XIA_Worker is
       --  document order and returning them as a Node_List;
       Finalize_Matchings (Total_Matchings, Xpath_Nodes);
 
+      McKae.XML.XPath.DFS_Processing.Pop_Parse_State;
       return Xpath_Nodes;
    end XPath_Query;
 

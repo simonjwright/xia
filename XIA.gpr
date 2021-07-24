@@ -23,15 +23,16 @@ project XIA is
    for Create_Missing_Dirs use "true";
 
    package Builder is
+      for Switches ("other") use ("-j3");
       for Global_Compilation_Switches ("ada") use
         (
          "-gnatX",
-         "-g",
-         "-j2"
+         "-g"
         );
    end Builder;
 
    package Compiler is
+      for Local_Configuration_Pragmas use "assertions.adc";
       for Default_Switches ("ada") use
         (
          "-gnatqQf",

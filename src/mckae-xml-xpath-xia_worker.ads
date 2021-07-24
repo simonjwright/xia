@@ -43,12 +43,7 @@ package Mckae.XML.XPath.XIA_Worker is
 
    function XPath_Query
      (N     : Dom.Core.Node;
-      -- A node in the XML tree against which the XPath query is
-      --  submitted.
-
-      XPath : String
-      -- The XPath query.
-     ) return Dom.Core.Node_List;
+      XPath : String) return Dom.Core.Node_List;
    -- Apply an XPath query, starting with the given node, in the case
    --  of a relative XPath query, or the document that contains the
    --  given node, otherwise.  Returns a list of nodes, which may be
@@ -56,7 +51,7 @@ package Mckae.XML.XPath.XIA_Worker is
    --  not follow XPath syntax, the Malformed_XPath exception is
    --  raised.
 
-      Malformed_XPath : exception;
+   Malformed_XPath : exception;
    -- Raised when the XPath query does not conform to XPath syntax.
 
    Inappropriate_Node : exception;

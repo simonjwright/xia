@@ -51,8 +51,6 @@ private
 
    use Mckae.Xml.Xpath.Expressions;
 
-   subtype Text_Expression_Values is Expression_Values (As_Expr_Text);
-
    use Literal_Model;
    use Number_Model;
    use Unary_Expr_Model;

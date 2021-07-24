@@ -81,11 +81,10 @@ begin
    Gnatcoll.Readline.Initialize (Appname => "test_xpath",
                                  History_File => "test_xpath.history");
 
-   Put ("Enter XML file name: ");
-
    Get_Xml:
    declare
-      Xml_File : constant String := Gnatcoll.Readline.Get_Line;
+      Xml_File : constant String := Gnatcoll.Readline.Get_Line
+        (Prompt => "Enter XML file name: ");
    begin
 
       File.Open (Xml_file, File_Source);
@@ -95,11 +94,10 @@ begin
 
       Get_Commands :
       loop
-         Put ("Enter XPath query: ");
-
          Get_Query :
          declare
-            Query : String := Gnatcoll.Readline.Get_Line;
+            Query : String := Gnatcoll.Readline.Get_Line
+              (Prompt => "Enter XPath query: ");
          begin
             exit Get_Commands when Query'Length = 0;
             if Query (1) /= '#' then
@@ -159,7 +157,6 @@ begin
                         Put (Nodes.Node_Value (N));
                      end if;
                   end loop Print_Nodes;
-                  New_Line;
 
                exception
                   when Malformed_XPath =>

@@ -93,10 +93,32 @@ package body McKae.XML.XPath.DFS_Processing is
    Star : constant Unbounded_String := To_Unbounded_String("*");
 
    -- Location step under construction
-   Location_Step : Location_Steps;
+   subtype Restricted_Location_Steps
+     is Location_Steps
+   with Predicate =>
+     Restricted_Location_Steps.Location_Predicates.Is_Empty;
+   Location_Step : Restricted_Location_Steps;
 
-   -- Rely on the initialization to set establish this as an empty step
-   Empty_Location_Step : Location_Steps;
+   Empty_Location_Step : constant Location_Steps := (others => <>);
+
+   Location_Step_Stack : Location_Steps_Management.Vector;
+
+   procedure Push_Parse_State is
+   begin
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("pushing parse state"));
+      Location_Step_Stack.Append (Location_Step);
+      Location_Step := Empty_Location_Step;
+   end Push_Parse_State;
+
+   procedure Pop_Parse_State is
+   begin
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("popping parse state to:"
+                                 & Location_Step'Image));
+      Location_Step := Location_Step_Stack.Last_Element;
+      Location_Step_Stack.Delete_Last;
+   end Pop_Parse_State;
 
    procedure Reset is
    begin
@@ -110,8 +132,6 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access xpath_Model.Parseable_Token'Class) is
    begin
       null;
-      --  Ada.Text_IO.Put (' ');
-      --  Ada.Text_IO.Put (T.Token_String.all);
    end Visit_Parseable_Token;
 
    procedure After_Literal_Nonterminal1
@@ -464,15 +484,13 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Abbreviated_Relative_Location_Path_Nonterminal'Class) is
    begin
-      --  Pathify(This.Relative_Location_Path_Part.all); XXXX
-      --  Add (Get_Location_Step);
+      --  The rule is Relative_Location_Path Double_Slash Step
       Add ((Axis                => Descendant_Or_Self_Axis,
             Node_Test           => (Node_Test => Node_Node_Test,
                                     Name      => Star),
             Location_Predicates => Predicates.Null_Predicate,
             Output_Step         => False));
-      --  Reset;
-      --  Pathify(This.Step_Part.all); XXXX
+      Reset;
    end After_Abbreviated_Relative_Location_Path_Nonterminal;
 
    procedure After_Abbreviated_Absolute_Location_Path_Nonterminal
@@ -491,6 +509,7 @@ package body McKae.XML.XPath.DFS_Processing is
                                     Name      => Star),
             Location_Predicates => Predicates.Null_Predicate,
             Output_Step         => False));
+      Reset;
    end After_Double_Slash_nonterminal;
 
    procedure After_Predicate_Expr_Nonterminal
@@ -865,13 +884,15 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Relative_Location_Path_Nonterminal1'Class) is
    begin
-        null;
+      --  The rule is Step
+      null;
    end After_Relative_Location_Path_Nonterminal1;
 
    procedure After_Relative_Location_Path_Nonterminal2
      (I : access DFS;
       T : access Relative_Location_Path_Nonterminal2'Class) is
    begin
+      --  The rule is Relative_Location_Path SLASH Step
       null;
    end After_Relative_Location_Path_Nonterminal2;
 
@@ -879,7 +900,7 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Relative_Location_Path_Nonterminal3'Class) is
    begin
-      --  Pathify(This.Abbreviated_Relative_Location_Path_Part.all);
+      --  The rule is Abbreviated_Relative_Location_Path
       null;
    end After_Relative_Location_Path_Nonterminal3;
 

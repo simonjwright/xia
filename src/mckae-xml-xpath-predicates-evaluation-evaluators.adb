@@ -31,6 +31,42 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
                    Nl : Dom.Core.Node_List) return Boolean;
 
    -----------------------------------------------
+   -- Debug
+
+   procedure Log (This  : in Xpath_Model.Parseable'Class)
+   is
+   begin
+      null;
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("s/" & Ada.Tags.Expanded_Name (This'Tag)));
+   end Log;
+
+   procedure Log (This  : in Xpath_Model.Parseable'Class;
+                  Value : in Expression_Values)
+   is
+   begin
+      null;
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("e/" & Ada.Tags.Expanded_Name (This'Tag)
+                                 & ": value: "
+                                 & Value'Image));
+   end Log;
+
+   procedure Log (This    : in Xpath_Model.Parseable'Class;
+                  Message :    String;
+                  Value   : in Expression_Values)
+   is
+   begin
+      null;
+      pragma Debug
+        (Ada.Text_IO.Put_Line ("i/" & Ada.Tags.Expanded_Name (This'Tag)
+                                 & ": "
+                                 & Message
+                                 & ": value: "
+                                 & Value'Image));
+   end Log;
+
+   -----------------------------------------------
    --  Public bodies
 
    procedure Evaluate
@@ -40,6 +76,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use type Ada.Tags.Tag;
    begin
+      Log (This);
       if This'Tag = Abbreviated_Absolute_Location_Path_Nonterminal'Tag then
          Evaluate_Terminal
            (Abbreviated_Absolute_Location_Path_Nonterminal (This),
@@ -596,32 +633,6 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    end Is_In;
 
    -----------------------------------------------
-   -- Debug
-
-   procedure Log (This  : in Xpath_Model.Parseable'Class;
-                  Value : in Expression_Values)
-   is
-   begin
-      null;
-      --  Ada.Text_IO.Put_Line (Ada.Tags.Expanded_Name (This'Tag)
-      --                          & ": value: "
-      --                          & Value'Image);
-   end Log;
-
-   procedure Log (This    : in Xpath_Model.Parseable'Class;
-                  Message :    String;
-                  Value   : in Expression_Values)
-   is
-   begin
-      null;
-      --  Ada.Text_IO.Put_Line (Ada.Tags.Expanded_Name (This'Tag)
-      --                          & ": "
-      --                          & Message
-      --                          & ": value: "
-      --                          & Value'Image);
-   end Log;
-
-   -----------------------------------------------
    --  Local (see Processing_Instruction)
 
    procedure Evaluate_Terminal (This         : in     Parseable_Token;
@@ -649,7 +660,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
          Context_Node,
          Value);
       Predicate_Path_Nodes :=
-        Xia_Worker.Xpath_Query (Context_Node.N, To_String(Value.S));
+        Xia_Worker.Xpath_Query (Context_Node.N, To_String (Value.S));
       Value := (As_Node_List, Predicate_Path_Nodes);
       Log (This, Value);
    end Evaluate_Terminal;
@@ -1417,10 +1428,8 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       Evaluate_Parent
         (Number_Nonterminal (This.Number_Part.all),
          Context_Node,
-         Result);
-      Value := (Value_Type => As_Number,
-                F          => Long_Float'Value (-Result.S),
-                Special    => Normal);
+         Value);
+      Log (This, Value);
    exception
       when others =>
          Value  := (Value_Type => As_Number,
@@ -2199,6 +2208,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Abbreviated_Step_Base_Nonterminal1'Tag then
          Evaluate_Terminal
            (Abbreviated_Step_Base_Nonterminal1 (This),
@@ -2222,6 +2232,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Abbreviated_Step_Nonterminal1'Tag then
          Evaluate_Terminal
            (Abbreviated_Step_Nonterminal1 (This),
@@ -2245,6 +2256,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Absolute_Location_Path_Nonterminal1'Tag then
          Evaluate_Terminal
            (Absolute_Location_Path_Nonterminal1 (This),
@@ -2273,6 +2285,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Additive_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Additive_Expr_Nonterminal1 (This),
@@ -2301,6 +2314,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = And_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (And_Expr_Nonterminal1 (This),
@@ -2324,6 +2338,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Arguments_Nonterminal1'Tag then
          Evaluate_Terminal
            (Arguments_Nonterminal1 (This),
@@ -2352,6 +2367,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Axis_Name_Nonterminal10'Tag then
          Evaluate_Terminal
            (Axis_Name_Nonterminal10 (This),
@@ -2430,6 +2446,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Equality_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Equality_Expr_Nonterminal1 (This),
@@ -2458,6 +2475,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Filter_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Filter_Expr_Nonterminal1 (This),
@@ -2481,6 +2499,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Literal_Nonterminal1'Tag then
          Evaluate_Terminal
            (Literal_Nonterminal1 (This),
@@ -2504,6 +2523,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Location_Path_Nonterminal1'Tag then
          Evaluate_Terminal
            (Location_Path_Nonterminal1 (This),
@@ -2527,6 +2547,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Multiplicative_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Multiplicative_Expr_Nonterminal1 (This),
@@ -2560,6 +2581,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = NCNAME_Or_ID_Nonterminal1'Tag then
          Evaluate_Terminal
            (NCNAME_Or_ID_Nonterminal1 (This),
@@ -2608,6 +2630,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Name_Test_Nonterminal1'Tag then
          Evaluate_Terminal
            (Name_Test_Nonterminal1 (This),
@@ -2636,6 +2659,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Node_Test_Nonterminal1'Tag then
          Evaluate_Terminal
            (Node_Test_Nonterminal1 (This),
@@ -2664,6 +2688,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Node_Type_Nonterminal1'Tag then
          Evaluate_Terminal
            (Node_Type_Nonterminal1 (This),
@@ -2697,6 +2722,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Number_Nonterminal1'Tag then
          Evaluate_Terminal
            (Number_Nonterminal1 (This),
@@ -2720,6 +2746,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Or_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Or_Expr_Nonterminal1 (This),
@@ -2743,6 +2770,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Path_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Path_Expr_Nonterminal1 (This),
@@ -2776,6 +2804,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Predicates_Nonterminal1'Tag then
          Evaluate_Terminal
            (Predicates_Nonterminal1 (This),
@@ -2799,6 +2828,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Primary_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Primary_Expr_Nonterminal1 (This),
@@ -2837,6 +2867,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = QName_Nonterminal1'Tag then
          Evaluate_Terminal
            (QName_Nonterminal1 (This),
@@ -2860,6 +2891,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Relational_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Relational_Expr_Nonterminal1 (This),
@@ -2898,6 +2930,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Relative_Location_Path_Nonterminal1'Tag then
          Evaluate_Terminal
            (Relative_Location_Path_Nonterminal1 (This),
@@ -2926,6 +2959,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Step_Base_Nonterminal1'Tag then
          Evaluate_Terminal
            (Step_Base_Nonterminal1 (This),
@@ -2949,6 +2983,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Step_Nonterminal1'Tag then
          Evaluate_Terminal
            (Step_Nonterminal1 (This),
@@ -2972,6 +3007,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Unary_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Unary_Expr_Nonterminal1 (This),
@@ -2995,6 +3031,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    is
       use Ada.Tags;
    begin
+      Log (This);
       if This'Tag = Union_Expr_Nonterminal1'Tag then
          Evaluate_Terminal
            (Union_Expr_Nonterminal1 (This),

@@ -39,7 +39,7 @@ package McKae.XML.XPath.Locations is
    use Ada.Strings.Unbounded;
    use McKae.XML.XPath;
 
-   -- XPath axes
+   --  XPath axes
    type Axes is
      (Child_Axis,
       Parent_Axis,
@@ -57,13 +57,13 @@ package McKae.XML.XPath.Locations is
 
       Preceding_Axis);
 
-   -- No explicit axis implies the child axis
+   --  No explicit axis implies the child axis
    No_Axis : constant Axes := Child_Axis;
 
-   -- Axes whose traversal consists of immediate, direct traversals
+   --  Axes whose traversal consists of immediate, direct traversals
    subtype Immediate_Axes is Axes range Child_Axis .. Attribute_Axis;
 
-   -- Axes whose traversal requires the traversal of branchings
+   --  Axes whose traversal requires the traversal of branchings
    subtype Branched_Axes
      is Axes range Descendant_Or_Self_Axis .. Preceding_Axis;
 
@@ -77,7 +77,7 @@ package McKae.XML.XPath.Locations is
       others => False);
    Forward_Axis : constant Axes_Directionality := not Reverse_Axis;
 
-   -- Kinds of node tests
+   --  Kinds of node tests
    type Node_Tests is
      (No_Node_Test,
       QName_Node_Test,
@@ -89,7 +89,7 @@ package McKae.XML.XPath.Locations is
 
    ----------------------------------------------------------------
 
-   -- Specification of the node test portion of a location step
+   --  Specification of the node test portion of a location step
    type Node_Test_Specification
      (Node_Test : Node_Tests := No_Node_Test) is
       record
@@ -107,15 +107,18 @@ package McKae.XML.XPath.Locations is
          end case;
       end record;
 
-   -- Location step, the part in between '/'s
+   --  Location step, the part in between '/'s
    type Location_Steps is record
       Axis                : Axes := No_Axis;
-      Node_Test           : Node_Test_Specification;
-      Location_Predicates : Predicates.Predicate_List;
+      Node_Test           : Node_Test_Specification
+        := (Node_Test => No_Node_Test,
+            Name      => Null_Unbounded_String);
+      Location_Predicates : Predicates.Predicate_List
+        := Predicates.Null_Predicate;
       Output_Step         : Boolean := False;
    end record;
 
-   -- A sequence of location steps
+   --  A sequence of location steps
    package Location_Steps_Management is new
      Ada.Containers.Vectors (Positive, Location_Steps);
 
@@ -125,7 +128,7 @@ package McKae.XML.XPath.Locations is
          Path     : Location_Steps_Management.Vector;
       end record;
 
-   -- Redefinition of strings to be compatible with the DOM interface
+   --  Redefinition of strings to be compatible with the DOM interface
    subtype XPath_String is Unicode.CES.Byte_Sequence;
 
    --  Add a newly defined location step to the path (unless we're in
@@ -148,10 +151,10 @@ package McKae.XML.XPath.Locations is
    --  Free procedure.    XXXX why?
    function Get_Path return Location_Paths;
 
-   -- Release the resources used by the construction of a location path
+   --  Release the resources used by the construction of a location path
    procedure Free (Location_Path : in out Location_Paths);
 
-   -- Reset the location path processing for a new query.  This must
+   --  Reset the location path processing for a new query.  This must
    --  be called before invoking the Xia_Parser_Model.Pathify  XXXX
    --  procedure.
    procedure Reset_For_Parsing;

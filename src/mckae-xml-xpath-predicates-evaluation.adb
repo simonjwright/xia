@@ -84,10 +84,20 @@ package body McKae.XML.XPath.Predicates.Evaluation is
                   Evaluators.Evaluate (Predicate.all,
                                        Node_Item,
                                        Expression);
-                  Expressions.Coerce (Expression, Expressions.As_Boolean);
 
-                  if Expression.B then
-                     Filtered_Nodes.Append (Node_Sets.Element (Cursor));
+                  if Expression.Value_Type = As_Number
+                  then
+                     if Expression.Special = Normal
+                       and then Integer (Expression.F) = Node_Item_Position
+                     then
+                        Filtered_Nodes.Append (Node_Sets.Element (Cursor));
+                     end if;
+                  else
+                     Expressions.Coerce (Expression, Expressions.As_Boolean);
+
+                     if Expression.B then
+                        Filtered_Nodes.Append (Node_Sets.Element (Cursor));
+                     end if;
                   end if;
 
                   Node_Sets.Next (Cursor);
