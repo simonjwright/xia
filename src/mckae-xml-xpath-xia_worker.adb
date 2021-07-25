@@ -37,9 +37,7 @@ use  Ada.Strings.Unbounded;
 with Dom.Core.Append_Node;
 with Dom.Core.Nodes;
 
-with McKae.XML.XPath.DFS_Processing;
 with Mckae.Xml.Xpath.Locations;
-use  Mckae.Xml.Xpath.Locations;
 with Mckae.Xml.Xpath.Node_Sets;
 with Mckae.XML.XPath.Predicates;
 with Mckae.XML.XPath.Predicates.Evaluation;
@@ -55,6 +53,7 @@ package body Mckae.XML.XPath.XIA_Worker is
    use Ada.Strings;
    use Dom.Core;
    use Dom.Core.Nodes;
+   use Mckae.Xml.Xpath.Locations;
 
    -------------------------------------------------------------------
 
@@ -704,7 +703,6 @@ package body Mckae.XML.XPath.XIA_Worker is
       Total_Matchings : Node_Sets.Set;
 
    begin
-      McKae.XML.XPath.DFS_Processing.Push_Parse_State;
       pragma Debug
         (Ada.Text_IO.Put_Line ("q: " & XPath));
       loop
@@ -748,7 +746,6 @@ package body Mckae.XML.XPath.XIA_Worker is
       --  document order and returning them as a Node_List;
       Finalize_Matchings (Total_Matchings, Xpath_Nodes);
 
-      McKae.XML.XPath.DFS_Processing.Pop_Parse_State;
       return Xpath_Nodes;
    end XPath_Query;
 

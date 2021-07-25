@@ -87,7 +87,7 @@ begin
         (Prompt => "Enter XML file name: ");
    begin
 
-      File.Open (Xml_file, File_Source);
+      File.Open (Trim (Xml_File, Ada.Strings.Both), File_Source);
 
       Readers.Parse (XML_Source_Reader, File_Source);
       File.Close (File_Source);

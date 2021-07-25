@@ -18,6 +18,42 @@ package body McKae.XML.XPath.DFS_Processing is
    function "-" (U : Unbounded_String) return String
                  renames To_String;
 
+   function Get_Axis (This : Axis_Name_Nonterminal'Class)
+                     return Axes is
+      use Ada.Tags;
+   begin
+      return
+        (if This'Tag = Axis_Name_Nonterminal1'Tag then
+             Ancestor_Axis
+          elsif This'Tag = Axis_Name_Nonterminal2'Tag then
+             Ancestor_Or_Self_Axis
+          elsif This'Tag = Axis_Name_Nonterminal3'Tag then
+             Attribute_Axis
+          elsif This'Tag = Axis_Name_Nonterminal4'Tag then
+             Child_Axis
+          elsif This'Tag = Axis_Name_Nonterminal5'Tag then
+             Descendant_Axis
+          elsif This'Tag = Axis_Name_Nonterminal6'Tag then
+             Descendant_Or_Self_Axis
+          elsif This'Tag = Axis_Name_Nonterminal7'Tag then
+             Following_Axis
+          elsif This'Tag = Axis_Name_Nonterminal8'Tag then
+             Following_Sibling_Axis
+          elsif This'Tag = Axis_Name_Nonterminal9'Tag then
+             Namespace_Axis
+          elsif This'Tag = Axis_Name_Nonterminal10'Tag then
+             Parent_Axis
+          elsif This'Tag = Axis_Name_Nonterminal11'Tag then
+             Preceding_Axis
+          elsif This'Tag = Axis_Name_Nonterminal12'Tag then
+             Preceding_Sibling_Axis
+          elsif This'Tag = Axis_Name_Nonterminal13'Tag then
+             Self_Axis
+          else
+             raise  Constraint_Error
+               with Expanded_Name (This'Tag) & " not an Axis tag");
+   end Get_Axis;
+
    function Get_Axis_Name (This : Axis_Name_Nonterminal'Class)
                           return Unbounded_String
    is
@@ -100,25 +136,6 @@ package body McKae.XML.XPath.DFS_Processing is
    Location_Step : Restricted_Location_Steps;
 
    Empty_Location_Step : constant Location_Steps := (others => <>);
-
-   Location_Step_Stack : Location_Steps_Management.Vector;
-
-   procedure Push_Parse_State is
-   begin
-      pragma Debug
-        (Ada.Text_IO.Put_Line ("pushing parse state"));
-      Location_Step_Stack.Append (Location_Step);
-      Location_Step := Empty_Location_Step;
-   end Push_Parse_State;
-
-   procedure Pop_Parse_State is
-   begin
-      pragma Debug
-        (Ada.Text_IO.Put_Line ("popping parse state to:"
-                                 & Location_Step'Image));
-      Location_Step := Location_Step_Stack.Last_Element;
-      Location_Step_Stack.Delete_Last;
-   end Pop_Parse_State;
 
    procedure Reset is
    begin
@@ -480,6 +497,7 @@ package body McKae.XML.XPath.DFS_Processing is
 
    --  XXXX not sure this shouldn't be Before?
    --  XXXX This is definitely wrong!
+   --  There are THREE things here.
    procedure After_Abbreviated_Relative_Location_Path_Nonterminal
      (I : access DFS;
       T : access Abbreviated_Relative_Location_Path_Nonterminal'Class) is
@@ -527,6 +545,9 @@ package body McKae.XML.XPath.DFS_Processing is
         (Node_Test => QName_Node_Test,
          Name      => +T.NCName_Part.Token_String.all,
          Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal1: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal1;
 
    procedure After_NCNAME_Or_ID_Nonterminal2
@@ -537,6 +558,9 @@ package body McKae.XML.XPath.DFS_Processing is
         (Node_Test => QName_Node_Test,
          Name      => Get_Axis_Name (T.Axis_Name_Part.all),
          Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal2: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal2;
 
    procedure After_NCNAME_Or_ID_Nonterminal3
@@ -547,6 +571,9 @@ package body McKae.XML.XPath.DFS_Processing is
         (Node_Test => QName_Node_Test,
          Name      => Get_Node_Type_Name (T.Node_Type_Part.all),
          Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal3: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal3;
 
    procedure After_NCNAME_Or_ID_Nonterminal4
@@ -556,6 +583,9 @@ package body McKae.XML.XPath.DFS_Processing is
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.And_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal4: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal4;
 
    procedure After_NCNAME_Or_ID_Nonterminal5
@@ -565,6 +595,9 @@ package body McKae.XML.XPath.DFS_Processing is
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Or_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal5: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal5;
 
    procedure After_NCNAME_Or_ID_Nonterminal6
@@ -574,6 +607,9 @@ package body McKae.XML.XPath.DFS_Processing is
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Mod_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal6;
 
    procedure After_NCNAME_Or_ID_Nonterminal7
@@ -583,6 +619,9 @@ package body McKae.XML.XPath.DFS_Processing is
       Location_Step.Node_Test := (Node_Test => QName_Node_Test,
                                   Name      => +T.Div_Part.Token_String.all,
                                   Prefix    => Null_Unbounded_String);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("NCNAME_Or_ID_Nonterminal7: " & Location_Step.Node_Test'Image));
    end After_NCNAME_Or_ID_Nonterminal7;
 
    procedure After_QName_Nonterminal1
@@ -606,6 +645,9 @@ package body McKae.XML.XPath.DFS_Processing is
            (T.NCName_Or_ID_Part2.all).NCName_Part.Token_String.all,
          Prefix    => +NCNAME_Or_ID_Nonterminal1
            (T.NCName_Or_ID_Part1.all).NCName_Part.Token_String.all);
+      pragma Debug
+        (Ada.Text_IO.Put_Line
+           ("QName_Nonterminal2: " & Location_Step.Node_Test'Image));
    end After_QName_Nonterminal2;
 
    procedure After_Name_Test_Nonterminal1
@@ -613,7 +655,12 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Name_Test_Nonterminal1'Class) is
    begin
       --  Rule is STAR
-      Location_Step.Node_Test.Name := Star;
+      Location_Step :=
+        (Axis                => Descendant_Or_Self_Axis,
+         Node_Test           => (Node_Test => Node_Node_Test,
+                                 Name      => Star),
+         Location_Predicates => Predicates.Null_Predicate,
+         Output_Step         => False);
    end After_Name_Test_Nonterminal1;
 
    procedure After_Name_Test_Nonterminal2
@@ -629,7 +676,9 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Name_Test_Nonterminal3'Class) is
    begin
       --  Rule is NCNAME_Or_ID COLON STAR
+      --  I don't understand this one!
       null;
+      pragma Assert (False, "not implemented");
    end After_Name_Test_Nonterminal3;
 
    procedure After_Node_Type_Nonterminal1
@@ -669,10 +718,7 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Node_Test_Nonterminal1'Class) is
    begin
       --  Rule is Name_Test
-      --  Change the test type, keep the name
-      Location_Step.Node_Test :=
-        (Node_Test => NCName_Node_Test,
-         Name      => Location_Step.Node_Test.Name);
+      null;
    end After_Node_Test_Nonterminal1;
 
    procedure After_Node_Test_Nonterminal2
@@ -680,7 +726,9 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Node_Test_Nonterminal2'Class) is
    begin
       --  Rule is Node_Type L_PAREN R_PAREN
-      null;
+      Location_Step.Node_Test :=
+        (Node_Test => Node_Node_Test,
+         Name      => Get_Node_Type_Name (T.Node_Type_Part.all));
    end After_Node_Test_Nonterminal2;
 
    procedure After_Node_Test_Nonterminal3
@@ -820,6 +868,10 @@ package body McKae.XML.XPath.DFS_Processing is
       T : access Step_Base_Nonterminal1'Class) is
    begin
       --  The rule is Axis_Specifier Node_Test.
+      --  The Node_Test has already added the Location_Step; we need to
+      --  overwrite the Axis using the Axis_Specifier_Part.
+      Location_Step.Axis :=
+        Get_Axis (T.Axis_Specifier_Part.Axis_Name_Part.all);
       Add (Location_Step);
       Reset;
    end After_Step_Base_Nonterminal1;
