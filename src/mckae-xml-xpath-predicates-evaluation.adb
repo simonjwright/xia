@@ -88,7 +88,8 @@ package body McKae.XML.XPath.Predicates.Evaluation is
                   if Expression.Value_Type = As_Number
                   then
                      if Expression.Special = Normal
-                       and then Integer (Expression.F) = Node_Item_Position
+                       and then Integer (Long_Float'Truncation (Expression.F))
+                       = Node_Item_Position
                      then
                         Filtered_Nodes.Append (Node_Sets.Element (Cursor));
                      end if;

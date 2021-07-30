@@ -87,6 +87,10 @@ package McKae.XML.XPath.Locations is
       Processing_Instruction_Node_Test,
       Node_Node_Test);
 
+   --  Node tests that are specifiable in the XPath syntax
+   subtype Specifiable_Node_Tests
+     is Node_Tests range Text_Node_Test .. Node_Node_Test;
+
    ----------------------------------------------------------------
 
    --  Specification of the node test portion of a location step
