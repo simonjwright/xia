@@ -77,7 +77,14 @@ package McKae.XML.XPath.Locations is
       others => False);
    Forward_Axis : constant Axes_Directionality := not Reverse_Axis;
 
-   --  Kinds of node tests
+   --  Kinds of node tests.
+   --
+   --  Note that Expression_Node_Test isn't really a _test_; it's used
+   --  after the second alternative of Primary_Expr (L_PAREN Expr
+   --  R_PAREN) so that the predicate in a query such as
+   --    (a//b/*)[1]
+   --  is applied to the whole node set, rather than to the results
+   --  of applying the query to each input node.
    type Node_Tests is
      (No_Node_Test,
       QName_Node_Test,
@@ -85,7 +92,8 @@ package McKae.XML.XPath.Locations is
       Text_Node_Test,
       Comment_Node_Test,
       Processing_Instruction_Node_Test,
-      Node_Node_Test);
+      Node_Node_Test,
+      Expression_Node_Test);
 
    --  Node tests that are specifiable in the XPath syntax
    subtype Specifiable_Node_Tests
@@ -106,7 +114,8 @@ package McKae.XML.XPath.Locations is
               Text_Node_Test                   |
               Comment_Node_Test                |
               Processing_Instruction_Node_Test |
-              Node_Node_Test =>
+              Node_Node_Test                   |
+              Expression_Node_Test =>
                null;
          end case;
       end record;

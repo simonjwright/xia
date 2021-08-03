@@ -461,7 +461,12 @@ package body McKae.XML.XPath.DFS_Processing is
      (I : access DFS;
       T : access Primary_Expr_Nonterminal2'Class) is
    begin
-      null;
+      Add ((Axis                => Self_Axis,
+            Node_Test           => (Node_Test => Expression_Node_Test,
+                                    Name      => Null_Unbounded_String),
+            Location_Predicates => Predicates.Null_Predicate,
+            Output_Step         => False));
+      Reset;
    end After_Primary_Expr_Nonterminal2;
 
    procedure After_Primary_Expr_Nonterminal3

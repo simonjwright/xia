@@ -83,6 +83,16 @@
       <xsl:text>==================</xsl:text>
     </xsl:message>
 
+    <xsl:for-each select="(a//b/*)">
+      <xsl:message>
+        <xsl:text>(a//b/*) </xsl:text>
+        <xsl:value-of select="@name"/>
+      </xsl:message>
+    </xsl:for-each>
+    <xsl:message>
+      <xsl:text>==================</xsl:text>
+    </xsl:message>
+
     <xsl:for-each select="(a//b/*)[1]">
       <xsl:message>
         <xsl:text>(a//b/*)[1] </xsl:text>

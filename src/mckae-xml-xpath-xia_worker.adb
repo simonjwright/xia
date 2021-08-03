@@ -30,9 +30,7 @@
 
 with Ada.Containers.Ordered_Maps;
 with Ada.Strings.Fixed;
-use  Ada.Strings.Fixed;
 with Ada.Strings.Unbounded;
-use  Ada.Strings.Unbounded;
 
 with Dom.Core.Append_Node;
 with Dom.Core.Nodes;
@@ -51,16 +49,112 @@ with Ada.Text_IO;
 package body Mckae.XML.XPath.XIA_Worker is
 
    use Ada.Strings;
+   use Ada.Strings.Fixed;
+   use Ada.Strings.Unbounded;
    use Dom.Core;
    use Dom.Core.Nodes;
    use Mckae.Xml.Xpath.Locations;
 
    -------------------------------------------------------------------
+   --  Local specs
 
+   --  This is used to obtain the set of matching nodes in document
+   --  order.
+   package Sortable_Matching_Tree
+   is new Ada.Containers.Ordered_Maps (Key_Type     => Unbounded_String,
+                                       Element_Type => DOM.Core.Node);
+
+   -------------------------------------------------------------------
+
+   procedure Get_Index_And_List (Of_Node : in     Node;
+                                 Index   :    out Natural;
+                                 List    :    out Node_List);
+
+   --  Search for a '|' in the string, which signifies the separator
+   --  between queries being unioned together.  However, beware such
+   --  vertical bars embedded in strings and predicates.
+   function Query_Separator_Index(S : String) return Natural;
+
+   --  Apply the Step's Predicates to Matchings, removing any entries
+   --  that don't pass.
+   procedure Predicate_Filtration (Matchings     : in out Node_Sets.Set;
+                                   Location_Step : in     Location_Steps);
+
+   function Is_Node_Match (N  : Node; Ls : Location_Steps) return Boolean;
+
+   --  Apply Location_Step to N, appending any resulting nodes to
+   --  Matchings.
+   --  Attr_Parent is a workround for an XML/Ada feature: the parent of
+   --  an attribute node isn't available.
+   procedure Do_Matching (N             : in     Node;
+                          Location_Step : in     Location_Steps;
+                          Matchings     : in out Node_Sets.Set;
+                          Attr_Parent   : in     Node := null);
+
+   --  If Include_Self is True, process N; in any case, process all
+   --  the descendats of N, and their descendants, all the way down.
+   procedure Descendant_Traversal (N             : in     Node;
+                                   Deferred_Step : in     Location_Steps;
+                                   Location_Step : in     Location_Steps;
+                                   Matchings     : in out Node_Sets.Set;
+                                   Include_Self  : in     Boolean := True);
+
+   --  Process the rest of the nodes in this list and their
+   --  descendants, then go to the parent and process all its
+   --  subsequent nodes
+   procedure Following_Traversal (N             : in     Node;
+                                  Deferred_Step : in     Location_Steps;
+                                  Location_Step : in     Location_Steps;
+                                  Matchings     : in out Node_Sets.Set);
+
+   --  Process the previous of the nodes in this list and their
+   --  descendants, then go to the parent and process all its
+   --  preceding nodes
+   procedure Preceding_Traversal (N             : in     Node;
+                                  Deferred_Step : in     Location_Steps;
+                                  Location_Step : in     Location_Steps;
+                                  Matchings     : in out Node_Sets.Set);
+
+   --  Decide whether to pursue the descendant or self axis, the
+   --  following axis, or the preceding axis.
+   procedure Deferred_Traversal
+     (Location_Step : in     Location_Steps;
+      Match         : in     Node_Sets.Current_Matchings;
+      Matchings     : in out Node_Sets.Set);
+
+   --  ? XXX
    procedure Do_Final_Traversal (N             : in     Node;
                                  Location_Step : in     Location_Steps;
                                  Matchings     : in out Node_Sets.Set;
                                  Include_Self  : in     Boolean := True);
+
+   --  Apply the Step to each node in Matchings, then overwrite Matchings
+   --  with the new set.
+   procedure Extract_Nodes (Location_Step : in     Location_Steps;
+                            Matchings     : in out Node_Sets.Set);
+
+   --  Split XPath into Location_Steps, then apply each successively to
+   --  Matchings, overwriting Matchings with the resultant set.
+   procedure Evaluate_Location_Path (XPath     : in     String;
+                                     Matchings : in out Node_Sets.Set);
+
+   --  Use the node's position in the DOM to make a unique sort key.
+   --  The 5th node will have key          000000000000000005
+   --  Its 3rd child will have key         000000000000000005000003
+   --  That node's 1st child will have key 000000000000000005000003000001
+   --  etc.
+   --  (the first 5 zeros correspond to the root node)
+   function Create_Node_Key (For_Node : Node) return Unbounded_String;
+
+   --  Do an in-order traversal of M to get the nodes back in document
+   --  order, and output them to Nodes..
+   procedure Output_Nodes (M     : in     Sortable_Matching_Tree.Map;
+                           Nodes :    out Node_List);
+
+   --  Iterate through the set of Matchings, sorting them into
+   --  document order and returning them as a Node_List.
+   procedure Finalize_Matchings (Matchings   : in     Node_Sets.Set;
+                                 Xpath_Nodes :    out Node_List);
 
    -------------------------------------------------------------------
 
@@ -84,7 +178,7 @@ package body Mckae.XML.XPath.XIA_Worker is
 
    function Query_Separator_Index(S : String) return Natural is
 
-      -- Search for a '|' in the string, which signifies the separator
+      --  Search for a '|' in the string, which signifies the separator
       --  between queries being unioned together.  However, beware
       --  such vertical bars embedded in strings and predicates.
 
@@ -178,6 +272,9 @@ package body Mckae.XML.XPath.XIA_Worker is
          when Processing_Instruction_Node_Test =>
             Match := (N.Node_Type = Processing_Instruction_Node)
               and NT.Name = Node_Value(N);
+
+         when Expression_Node_Test =>
+            Match := True;
 
          when No_Node_Test =>
             pragma Assert (False);
@@ -325,7 +422,7 @@ package body Mckae.XML.XPath.XIA_Worker is
                                    Deferred_Step : in     Location_Steps;
                                    Location_Step : in     Location_Steps;
                                    Matchings     : in out Node_Sets.Set;
-                                   Include_Self  : in     Boolean           := True) is
+                                   Include_Self  : in     Boolean := True) is
       Children : Node_List;
       Child    : Node;
 
@@ -351,7 +448,7 @@ package body Mckae.XML.XPath.XIA_Worker is
                                   Location_Step : in     Location_Steps;
                                   Matchings     : in out Node_Sets.Set) is
 
-      -- Process the rest of the nodes in this list and their
+      --  Process the rest of the nodes in this list and their
       --  descendants, then go to the parent and process all its
       --  subsequent nodes
 
@@ -378,7 +475,7 @@ package body Mckae.XML.XPath.XIA_Worker is
                                   Deferred_Step : in     Location_Steps;
                                   Location_Step : in     Location_Steps;
                                   Matchings     : in out Node_Sets.Set) is
-      -- Process the previous of the nodes in this list and their
+      --  Process the previous of the nodes in this list and their
       --  descendants, then go to the parent and process all its
       --  preceding nodes
 
@@ -389,7 +486,7 @@ package body Mckae.XML.XPath.XIA_Worker is
       if N /= null then
          Get_Index_And_List(N, N_Index, This_List);
 
-         -- Process the following siblings and all descendants
+         -- Process the preceding siblings and all descendants
          for I in 0 .. N_Index - 1 loop
             Descendant_Traversal(Item(This_List, I), Deferred_Step, Location_Step, Matchings);
          end loop;
@@ -401,9 +498,10 @@ package body Mckae.XML.XPath.XIA_Worker is
 
    -------------------------------------------------------------------
 
-   procedure Deferred_Traversal (Location_Step : in     Location_Steps;
-                                 Match         : in     Node_Sets.Current_Matchings;
-                                 Matchings     : in out Node_Sets.Set) is
+   procedure Deferred_Traversal
+     (Location_Step : in     Location_Steps;
+      Match         : in     Node_Sets.Current_Matchings;
+      Matchings     : in out Node_Sets.Set) is
    begin
       case Match.Branch_Step.Axis is
          when Descendant_Or_Self_Axis |
@@ -509,49 +607,71 @@ package body Mckae.XML.XPath.XIA_Worker is
       use type Predicates.Predicate_List;
 
    begin
-      -- Iterate through the current set of matchings, evaluating each
-      --  against the path step
-      while Cursor /= Node_Sets.No_Element loop
-         Match := Node_Sets.Element (Cursor);
-
-         -- Check whether this is a direct node check, or a deferred traversal
-         if Match.Axis = Self_Axis then
-            Do_Matching(Match.Matching_Node, Location_Step, New_Matchings);
-
-         elsif Match.Axis = Attribute_Axis then
-            -- This is a workaround for an XML/Ada bug wherein
-            --  invoking Parent_Node() on an attribute node returns
-            --  null instead of its parent.
-            Do_Matching(Match.Matching_Node,
-                        Location_Step,
-                        New_Matchings,
-                        Match.Owner_Node);
-
-         else
-            -- A deferred traversal
-            Deferred_Traversal(Location_Step, Match, New_Matchings);
+      if Location_Step.Node_Test.Node_Test = Expression_Node_Test
+      then
+         --  Check the predicate criteria for all the input nodes together
+         if Location_Step.Location_Predicates /= Predicates.Null_Predicate
+         then
+            Predicate_Filtration (Matchings, Location_Step);
          end if;
+      else
+         --  Iterate through the current set of matchings, evaluating each
+         --  against the path step
+         Input_Nodes_Loop :
+         while Cursor /= Node_Sets.No_Element loop
+            One_Node :
+            declare
+               Step_Matchings : Node_Sets.Set;
+            begin
+               Match := Node_Sets.Element (Cursor);
 
-         Node_Sets.Next (Cursor);
-      end loop;
+               -- Check whether this is a direct node check, or a
+               -- deferred traversal
+               if Match.Axis = Self_Axis then
+                  Do_Matching (Match.Matching_Node,
+                               Location_Step,
+                               Step_Matchings);
 
-      -- Now check the predicate criteria
-      if Location_Step.Location_Predicates /= Predicates.Null_Predicate then
-         Predicate_Filtration(New_Matchings, Location_Step);
+               elsif Match.Axis = Attribute_Axis then
+                  -- This is a workaround for an XML/Ada bug wherein
+                  --  invoking Parent_Node() on an attribute node returns
+                  --  null instead of its parent.
+                  Do_Matching (Match.Matching_Node,
+                               Location_Step,
+                               Step_Matchings,
+                               Match.Owner_Node);
+
+               else
+                  -- A deferred traversal
+                  Deferred_Traversal (Location_Step, Match, Step_Matchings);
+               end if;
+
+               -- Now check the predicate criteria for the nodes selected for
+               -- this input node by this location path
+               if Location_Step.Location_Predicates /= Predicates.Null_Predicate
+               then
+                  Predicate_Filtration (Step_Matchings, Location_Step);
+               end if;
+
+               --  incorporate survivors in the result
+               New_Matchings.Union (Step_Matchings);
+
+            end One_Node;
+
+            Node_Sets.Next (Cursor);
+         end loop Input_Nodes_Loop;
+
+         Matchings := New_Matchings;
       end if;
-
-      Matchings := New_Matchings;
-
    exception
       when Xpath_Parser.Syntax_Error =>
-        raise Malformed_XPath;
+         raise Malformed_XPath;
    end Extract_Nodes;
 
    -------------------------------------------------------------------
 
-   procedure Evaluate_Location_Path
-     (XPath     : in     String;
-      Matchings : in out Node_Sets.Set)
+   procedure Evaluate_Location_Path (XPath     : in     String;
+                                     Matchings : in out Node_Sets.Set)
    is
       Query : String := Trim (XPath, Both);
 
@@ -577,14 +697,6 @@ package body Mckae.XML.XPath.XIA_Worker is
       when Query_Handling.Malformed_Query =>
          raise Malformed_XPath;
    end Evaluate_Location_Path;
-
-   -------------------------------------------------------------------
-
-   --  This is used to obtain the set of matching nodes in document
-   --  order.
-   package Sortable_Matching_Tree
-   is new Ada.Containers.Ordered_Maps (Key_Type => Unbounded_String,
-                                       Element_Type => DOM.Core.Node);
 
    -------------------------------------------------------------------
 
@@ -681,7 +793,7 @@ package body Mckae.XML.XPath.XIA_Worker is
          Node_Sets.Next (Cursor);
       end loop;
 
-      -- All the nodes are now inserted, do an in-order traversal to
+      --  All the nodes are now inserted, do an in-order traversal to
       --  get the nodes back in document order, and output them.
       Output_Nodes(Sorting_Tree, XPath_Nodes);
    end Finalize_Matchings;
@@ -742,8 +854,8 @@ package body Mckae.XML.XPath.XIA_Worker is
          Start := Split + 1;
       end loop;
 
-      -- Iterate through the set of matchings, sorting them into
-      --  document order and returning them as a Node_List;
+      --  Iterate through the set of matchings, sorting them into
+      --  document order and returning them as a Node_List.
       Finalize_Matchings (Total_Matchings, Xpath_Nodes);
 
       return Xpath_Nodes;

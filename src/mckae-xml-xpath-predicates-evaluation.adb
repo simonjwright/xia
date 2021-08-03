@@ -55,7 +55,9 @@ package body McKae.XML.XPath.Predicates.Evaluation is
       use type Node_Sets.Cursor;
 
    begin
+      Each_Predicate :
       for Predicate of Predicates loop
+         Filtering :
          declare
             Filtered_Nodes : Node_Sets.Set;
          begin
@@ -63,7 +65,9 @@ package body McKae.XML.XPath.Predicates.Evaluation is
             Node_Set_Size   := Natural (Nodes.Length);
             Cursor := Nodes.First;
 
+            Evaluating_Predicate :
             while Cursor /= Node_Sets.No_Element loop
+               Each_Node :
                declare
                   Expression : Expressions.Expression_Values;
                begin
@@ -103,11 +107,11 @@ package body McKae.XML.XPath.Predicates.Evaluation is
 
                   Node_Sets.Next (Cursor);
                   Node_Item_Index := Node_Item_Index + 1;
-               end;
-            end loop;
+               end Each_Node;
+            end loop Evaluating_Predicate;
             Nodes := Filtered_Nodes;
-         end;
-      end loop;
+         end Filtering;
+      end loop Each_Predicate;
 
    exception
       when Expressions.Invalid_Coercion

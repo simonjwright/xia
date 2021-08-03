@@ -110,13 +110,13 @@ NCNAME          {NCNAME}
 --dealing with one character literals a little harder
 
 -- Whitespace and Comments
---Must be "ignore", special connotations for ADAGoop
+-- Must be "ignore", special connotations for ADAGoop
 ignore   [\ \t\r\n]*
 
 --XPath grammar goes here
 grammar
-%start Location_Path
-
+-- %start Location_Path
+%start Expr
 
 Location_Path : Relative_Location_Path
                 | Absolute_Location_Path
