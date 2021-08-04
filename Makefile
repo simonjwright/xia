@@ -25,13 +25,9 @@ GPRCLEAN ?= gprclean
 # 'make' to make the XIA libraries for use with XIA.gpr.
 # 'make install' to install the XIA libraries with your GNAT (override
 # the location by "make install prefix=/where/ever")
-#
-# NB at present, we only build the static library. This is because
-# released versions of XML/Ada use a non-standard scenario variable
-# (XMLADA_BUILD), and it's not possible to hide this from users.
 
 libs:: lib-static-stamp
-#libs:: lib-relocatable-stamp
+libs:: lib-relocatable-stamp
 
 lib-static-stamp: force
 	$(GPRBUILD) -p -P XIA -XLIBRARY_TYPE=static
@@ -42,7 +38,7 @@ lib-relocatable-stamp: force
 	touch $@
 
 install:: install-static
-#install:: install-relocatable
+install:: install-relocatable
 
 install-static: lib-static-stamp
 	gprinstall					\
