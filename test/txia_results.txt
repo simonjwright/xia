@@ -891,6 +891,13 @@ Number of nodes: 3
   <link>
 </person>
 
+Evaluating: //person[3]/following-sibling::*/@id[1]
+
+Number of nodes: 3
+id="four.worker"
+id="five.worker"
+id="Big.Boss"
+
 Evaluating: //person[3]/following-sibling::*/@id[2]
 
 Number of nodes: 0
@@ -910,6 +917,12 @@ Evaluating: //person[3]/preceding-sibling::*[2]/@id
 
 Number of nodes: 1
 id="one.worker"
+
+Evaluating: //person[3]/preceding-sibling::*/@id[1]
+
+Number of nodes: 2
+id="one.worker"
+id="two.worker"
 
 Evaluating: //person[3]/preceding-sibling::*/@id[2]
 

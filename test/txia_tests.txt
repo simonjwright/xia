@@ -32,10 +32,12 @@ personnel/person/email/preceding::name/given/text()
 .
 ..//email
 //person[3]/following-sibling::*
+//person[3]/following-sibling::*/@id[1]
 //person[3]/following-sibling::*/@id[2]
 (//person[3]/following-sibling::*/@id)[2]
 //person[3]/preceding-sibling::*/@id
 //person[3]/preceding-sibling::*[2]/@id
+//person[3]/preceding-sibling::*/@id[1]
 //person[3]/preceding-sibling::*/@id[2]
 (//person[3]/preceding-sibling::*/@id)[2]
 /personnel/person[2]/email/preceding-sibling::name/given/ancestor-or-self::*[3]
