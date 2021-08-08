@@ -30,6 +30,7 @@
 
 with Mckae.XML.XPath.DFS_Processing;
 with Mckae.XML.XPath.Locations;
+with Ada.Directories;
 with Ada.Environment_Variables;
 with Ada.IO_Exceptions;
 with Ada.Text_IO;
@@ -49,8 +50,15 @@ package body Mckae.XML.XPath.Query_Handling is
       Step : Locations.Location_Steps;
 
       --  The generated parser expects the input line in a file.
+      Tmp_Dir : constant String :=
+        (if Ada.Environment_Variables.Exists ("TMPDIR")
+         then Ada.Environment_Variables.Value ("TMPDIR")
+         elsif Ada.Environment_Variables.Exists ("TMP")
+         then Ada.Environment_Variables.Value ("TMP")
+         else "/tmp");
       Tmp_File_Name : constant String
-        := Ada.Environment_Variables.Value ("TMPDIR") & "xia-tmp";
+        := Ada.Directories.Compose (Containing_Directory => Tmp_Dir,
+                                    Name => "xia-tmp");
       Tmp_File : Ada.Text_IO.File_Type;
 
    begin
