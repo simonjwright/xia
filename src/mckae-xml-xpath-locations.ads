@@ -115,6 +115,9 @@ package McKae.XML.XPath.Locations is
          end case;
       end record;
 
+   --  For debug
+   function Image (Object : Node_Test_Specification) return String;
+
    --  Location step, the part in between '/'s
    type Location_Steps is record
       Axis                : Axes := No_Axis;
@@ -126,6 +129,9 @@ package McKae.XML.XPath.Locations is
       Output_Step         : Boolean := False;
    end record;
 
+   --  For debug
+   function Image (Object : Location_Steps) return String;
+
    --  A sequence of location steps
    package Location_Steps_Management is new
      Ada.Containers.Vectors (Positive, Location_Steps);
@@ -135,6 +141,9 @@ package McKae.XML.XPath.Locations is
          Absolute : Boolean;
          Path     : Location_Steps_Management.Vector;
       end record;
+
+   --  For debug
+   function Image (Object : Location_Paths) return String;
 
    --  Redefinition of strings to be compatible with the DOM interface
    subtype XPath_String is Unicode.CES.Byte_Sequence;

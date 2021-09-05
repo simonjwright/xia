@@ -671,13 +671,12 @@ package body Mckae.XML.XPath.XIA_Worker is
       Query : String := Trim (XPath, Both);
 
       Location_Steps : Location_Paths;
-
    begin
       -- Split up the location path into discrete steps
       Location_Steps := Query_Handling.Pathify (Query);
 
       pragma Debug
-        (Ada.Text_IO.Put_Line (Location_Steps'Image));
+        (Ada.Text_IO.Put_Line (Image (Location_Steps)));
 
       for P of Location_Steps.Path loop
 
@@ -687,7 +686,6 @@ package body Mckae.XML.XPath.XIA_Worker is
       end loop;
 
       Free (Location_Steps);
-
    exception
       when Query_Handling.Malformed_Query =>
          raise Malformed_XPath;

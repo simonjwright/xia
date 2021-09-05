@@ -73,7 +73,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
       pragma Debug
         (Ada.Text_IO.Put_Line ("e/" & Ada.Tags.Expanded_Name (This'Tag)
                                  & ": value: "
-                                 & Value'Image));
+                                 & Image (Value)));
    end Log;
 
    procedure Log (This    : in Xpath_Model.Parseable'Class;
@@ -87,7 +87,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
                                  & ": "
                                  & Message
                                  & ": value: "
-                                 & Value'Image));
+                                 & Image (Value)));
    end Log;
 
    -----------------------------------------------
@@ -1518,7 +1518,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    begin
       --  Never called by function Evaluate_Parent
       raise Program_Error with "shouldn't be called";
-      Log (This, Value);
+      --  Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal
@@ -1542,7 +1542,7 @@ package body Mckae.Xml.Xpath.Predicates.Evaluation.Evaluators is
    begin
       --  Never called by function Evaluate_Parent
       raise Program_Error with "shouldn't be called";
-      Log (This, Value);
+      --  Log (This, Value);
    end Evaluate_Terminal;
 
    procedure Evaluate_Terminal

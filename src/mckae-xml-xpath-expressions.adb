@@ -54,14 +54,24 @@ package body Mckae.XML.XPath.Expressions is
 
    ----------------------------------------------------------------------
 
-   function "+"(S : String) return Unbounded_String
+   function "+" (S : String) return Unbounded_String
      renames To_Unbounded_String;
+   function "-" (S : Unbounded_String) return String
+     renames To_String;
 
-   -- Create the string-value of the expression in accorance with its
+   -- Create the string-value of the expression in accordance with its
    --  type.
-   function String_Value(N : Dom.Core.Node
-                         -- Node for which to create the string-value
-                        ) return Dom.Core.DOM_String;
+   function String_Value (Object : Dom.Core.Node) return Dom.Core.DOM_String;
+
+   function Image (Object : Expression_Values) return String is
+     (case Object.Value_Type is
+         when As_String | As_Expr_Text => -Object.S,
+         when As_Number => Object.F'Image & " (" & Object.Special'Image & ")",
+         when As_Boolean => Object.B'Image,
+         when As_Node_List =>
+           (if Length (Object.Ns) > 0
+            then "not-null"
+            else "null"));
 
    ----------------------------------------------------------------------
 
@@ -1037,27 +1047,24 @@ package body Mckae.XML.XPath.Expressions is
 
    ----------------------------------------------------------
 
-   function String_Value(N : Dom.Core.Node
-                         -- Node for which to create the string-value
-                        ) return Dom.Core.DOM_String
+   function String_Value (Object : Dom.Core.Node) return Dom.Core.DOM_String
    is
       use Dom.Core;
 
       Node_Set : Node_List;
-
    begin
-      case N.Node_Type is
+      case Object.Node_Type is
          when Attribute_Node
            | Text_Node
            | Comment_Node
            | Processing_Instruction_Node =>
-            return Node_Value(N);
+            return Node_Value (Object);
 
          when Element_Node =>
-            Node_Set := XIA_Worker.Xpath_Query(N, "./text()");
+            Node_Set := XIA_Worker.Xpath_Query (Object, "./text()");
 
          when Document_Node =>
-            Node_Set := XIA_Worker.Xpath_Query(N, "//text()");
+            Node_Set := XIA_Worker.Xpath_Query (Object, "//text()");
 
          when others =>
             null;

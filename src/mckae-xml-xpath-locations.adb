@@ -35,10 +35,56 @@ package body Mckae.XML.XPath.Locations is
 
    Accumulating_Predicate : Boolean := False;
 
+   function "-" (L : Ada.Strings.Unbounded.Unbounded_String) return String
+     renames Ada.Strings.Unbounded.To_String;
+
+   --  In Ada2020, we could just use Object'Image.
+   function Image (Object : Node_Test_Specification) return String
+   is
+   begin
+      return "test: " & Object.Node_Test'Image
+        & ", name: " & (-Object.Name)
+        & (if Object.Node_Test = QName_Node_Test
+           then ", prefix: " & (-Object.Prefix)
+           else "");
+   end Image;
+
+   --  In Ada2020, we could just use Object'Image.
+   function Image (Object : Location_Steps) return String
+   is
+   begin
+      return "step:"
+        & " axis: " & Object.Axis'Image
+        & ", " & Image (Object.Node_Test)
+        & ", output: " & Object.Output_Step'Image;
+      --  predicates TBD
+   end Image;
+
+   --  In Ada2020, we could just use Object'Image.
+   function Image (Object : Location_Paths) return String
+   is
+      function List
+        (Component : Location_Steps_Management.Cursor) return String
+      is
+         use Location_Steps_Management;
+      begin
+         return (if Component = No_Element
+                 then ""
+                 else ASCII.LF & " " & Image (Element (Component))
+                    & List (Next (Component)));
+      end List;
+      use type Ada.Containers.Count_Type;
+   begin
+      return "path ("
+        & (if Object.Absolute then "absolute" else "relative")
+        & ")"
+        & List (Object.Path.First);
+   end Image;
+
    procedure Add (Location_Step : in Location_Steps)
    is
       pragma Debug
-        (Ada.Text_IO.Put_Line ("adding step: " & Location_Step'Image));
+        (Ada.Text_IO.Put_Line ("adding " & Image (Location_Step)));
       pragma Assert (Location_Step.Node_Test.Node_Test /= No_Node_Test);
       Step : Location_Steps := Location_Step;
    begin
@@ -74,8 +120,7 @@ package body Mckae.XML.XPath.Locations is
       end;
       pragma Debug
         (Ada.Text_IO.Put_Line
-           ("updated predicates: "
-              & Parsing_Path.Path.Last_Element'Image));
+           ("updated predicates: " & Image (Parsing_Path.Path.Last_Element)));
    end Add_Predicate;
 
    procedure Begin_Predicate is

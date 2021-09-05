@@ -3,18 +3,29 @@ with "xmlada";
 project XIA is
 
    type Library_T is ("static", "relocatable");
-   Library_Type : Library_T := external ("LIBRARY_TYPE", "static");
+   Library_Type : Library_T := external ("XIA_LIBRARY_TYPE",
+                                         external ("LIBRARY_TYPE", "static"));
+
+   type Build_T is ("normal", "debug");
+   --  "debug" enables pragma Debug
+   Build_Type : Build_T := external ("XIA_BUILD_TYPE", "normal");
 
    for Library_Name use "xia";
    for Library_Kind use Library_Type;
    for Library_Dir use "./lib-" & Library_Type;
 
-   --  Defining Library_Interface causes gprbuild to create a
-   --  stand-alone library (SAL). This is a Good Thing here, because
-   --  the existing implementation using AdaGOOP would be hard to
-   --  modify even if the appropriate release was known. Using this
-   --  library interface exposes the minimal required interface.
-   for Library_Interface use ("XIA");
+   case Library_Type is
+      when "relocatable" =>
+         --  Defining Library_Interface causes gprbuild to create a
+         --  stand-alone library (SAL). This is a Good Thing here,
+         --  because the existing implementation using AdaGOOP would
+         --  be hard to modify even if the appropriate release was
+         --  known. Using this library interface exposes the minimal
+         --  required interface.
+         for Library_Interface use ("XIA");
+      when others =>
+         null;
+   end case;
 
    for Languages use ("ada");
 
@@ -24,20 +35,28 @@ project XIA is
 
    package Builder is
       for Switches ("other") use ("-j3");
+      for Switches ("ada") use ("-k");
       for Global_Compilation_Switches ("ada") use
         (
-         "-gnatX",
          "-g"
         );
    end Builder;
 
    package Compiler is
+      --  I want all assertions, but not to enable pragma Debug
       for Local_Configuration_Pragmas use "assertions.adc";
       for Default_Switches ("ada") use
         (
          "-gnatqQf",
          "-O0"
         );
+      case Build_Type is
+         when "debug" =>
+            for Default_Switches ("ada") use
+              Compiler'Default_Switches ("ada") & "-gnata";
+         when others =>
+            null;
+      end case;
    end Compiler;
 
 end XIA;

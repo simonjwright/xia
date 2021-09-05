@@ -70,6 +70,9 @@ package McKae.XML.XPath.Expressions is
          end case;
       end record;
 
+   --  For debug
+   function Image (Object : Expression_Values) return String;
+
    --  List in which function call arguments values are stored
    type Argument_List is array (Natural range <>) of Expression_Values;
 
