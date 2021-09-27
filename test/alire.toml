@@ -1,6 +1,7 @@
 name = "test_xpath"
 description = "Test harness for xia"
-version = "1.3.1"
+version = "1.4.0"
+licenses= "GPL-3.0-or-later"
 
 authors = ["Simon Wright"]
 maintainers = ["Simon Wright <simon@pushface.org>"]
