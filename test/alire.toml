@@ -1,6 +1,6 @@
 name = "test_xpath"
-description = "Test harness for xia"
-version = "1.4.0"
+description = "Test harness for xia. See ../README.md."
+version = "1.4.1"
 licenses= "GPL-3.0-or-later"
 
 authors = ["Simon Wright"]
@@ -11,5 +11,9 @@ project-files = ["test.gpr"]
 
 executables = ["test_xpath"]
 
-[[depends-on]]  # Added by alr
-gnatcoll_readline = "^21.0.0"  # Added by alr
+[[depends-on]]
+gnatcoll_readline = ">=21.0.0"
+xia = "*"
+
+[[pins]]
+xia = { path='..' }

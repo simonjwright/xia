@@ -4,7 +4,7 @@ Submitting XPath queries is done via the `XPath_Query` function in package `XIA`
 
 ## Example ##
 
-The test program [test\_xpath](test/test\_xpath.adb) opens an XML file into the `DOM.Readers.Tree_Reader` (`XML_Source_Readera`) and then executes queries, producing results in a `DOM.Core.Node_List` (`Queried_Nodes`):
+The test program [test\_xpath](test/test_xpath.adb) opens an XML file into the `DOM.Readers.Tree_Reader` (`XML_Source_Reader`) and then executes queries, producing results in a `DOM.Core.Node_List` (`Queried_Nodes`):
 ```
 Queried_Nodes :=
   Xpath_Query (Dom.Readers.Get_Tree (XML_Source_Reader), Query);
@@ -53,9 +53,7 @@ name="c1"
 
 A BASH script, `txia`, and an input file of XPath queries, `txia_tests.txt`, are provided in the `test/` directory to jam a bunch of queries through the test program (if more test queries are added, be sure to leave an empty line after all the queries - text after an empty line is ignored). `txia_tests.txt` also exhibits a wide variety of XPath queries, although the majority of these are nonsense queries as far as realistic usage is concerned, they're tailored to exercise and test various aspects of XIA's implementation.
 
-To generate the test program, `cd` to the test directory and invoke `gprbuild` as follows:
-
-    gprbuild -P test.gpr test_xpath
+To generate the test program, `cd` to the test directory and say `alr build`.
 
 Version history up to 1.00 is [here](HISTORY.md).
 

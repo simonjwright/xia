@@ -1,4 +1,4 @@
-with "../XIA";
+with "XIA";
 with "gnatcoll_readline";
 
 project Test is
@@ -10,7 +10,6 @@ project Test is
    package Builder is
       for Global_Compilation_Switches ("Ada") use
         (
-         "-gnatX",
          "-g"
         );
    end Builder;
