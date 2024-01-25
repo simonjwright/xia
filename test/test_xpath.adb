@@ -25,6 +25,7 @@
 
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
+with Ada.Text_IO;
 with Dom.Core.Nodes;
 with Dom.Readers;
 with Input_Sources.File;
@@ -76,92 +77,108 @@ begin
    Gnatcoll.Readline.Initialize (Appname => "test_xpath",
                                  History_File => "test_xpath.history");
 
-   Get_Xml:
-   declare
-      Xml_File : constant String := Gnatcoll.Readline.Get_Line
-        (Prompt => "Enter XML file name: ");
+   Catch_Filename_Errors :
    begin
 
-      File.Open (Trim (Xml_File, Ada.Strings.Both), File_Source);
+      Get_Xml:
+      declare
+         Xml_File : constant String := Gnatcoll.Readline.Get_Line
+           (Prompt => "Enter XML file name: ");
+         --  May raise End_Error.
+      begin
 
-      Readers.Parse (XML_Source_Reader, File_Source);
-      File.Close (File_Source);
+         File.Open (Trim (Xml_File, Ada.Strings.Both), File_Source);
+         --  May raise Name_Eerror.
 
-      Get_Commands :
-      loop
-         Get_Query :
-         declare
-            Query : String := Gnatcoll.Readline.Get_Line
-              (Prompt => "Enter XPath query: ");
-         begin
-            exit Get_Commands when Query'Length = 0;
-            if Query (1) /= '#' then
-               New_Line;
-               Put_Line ("Evaluating: " & Query);
-               New_Line;
-               Run_Query :
-               begin
-                  Queried_Nodes :=
-                    Xpath_Query (Readers.Get_Tree (XML_Source_Reader), Query);
-                  Put_Line
-                    ("Number of nodes:" &
-                       Natural'Image (Dom.Core.Nodes.Length (Queried_Nodes)));
+         Readers.Parse (XML_Source_Reader, File_Source);
+         File.Close (File_Source);
 
-                  Print_Nodes:
-                  for I in 0 .. Nodes.Length (Queried_Nodes) - 1 loop
-                     N := Dom.Core.Nodes.Item (Queried_Nodes, I);
+         Get_Commands :
+         loop
+            Get_Query :
+            declare
+               Query : String := Gnatcoll.Readline.Get_Line
+                 (Prompt => "Enter XPath query: ");
+            begin
+               exit Get_Commands when Query'Length = 0;
+               if Query (1) /= '#' then
+                  New_Line;
+                  Put_Line ("Evaluating: " & Query);
+                  New_Line;
+                  Run_Query :
+                  begin
+                     Queried_Nodes :=
+                       Xpath_Query (Readers.Get_Tree (XML_Source_Reader),
+                                    Query);
+                     Put_Line
+                       ("Number of nodes:" &
+                          Dom.Core.Nodes.Length (Queried_Nodes)'Image);
 
-                     if N.Node_Type = Element_Node then
-                        Put ("<");
-                        Put (Nodes.Node_Name (N));
-                        Put (">");
+                     Print_Nodes:
+                     for I in 0 .. Nodes.Length (Queried_Nodes) - 1 loop
+                        N := Dom.Core.Nodes.Item (Queried_Nodes, I);
 
-                        Children         := Nodes.Child_Nodes (N);
-                        Children_Printed := False;
-                        for J in 0 .. Nodes.Length (Children) - 1 loop
-                           Child := Nodes.Item (Children, J);
-                           if Child.Node_Type = Element_Node then
-                              if not Children_Printed then
-                                 New_Line;
-                                 Children_Printed := True;
+                        if N.Node_Type = Element_Node then
+                           Put ("<");
+                           Put (Nodes.Node_Name (N));
+                           Put (">");
+
+                           Children         := Nodes.Child_Nodes (N);
+                           Children_Printed := False;
+                           for J in 0 .. Nodes.Length (Children) - 1 loop
+                              Child := Nodes.Item (Children, J);
+                              if Child.Node_Type = Element_Node then
+                                 if not Children_Printed then
+                                    New_Line;
+                                    Children_Printed := True;
+                                 end if;
+                                 Put ("  <");
+                                 Put (Nodes.Node_Name (Child));
+                                 Put_Line (">");
+                              elsif Child.Node_Type = Text_Node then
+                                 if not Children_Printed then
+                                    New_Line;
+                                    Children_Printed := True;
+                                 end if;
+                                 Print_Text_Node (Child, Indent => True);
                               end if;
-                              Put ("  <");
-                              Put (Nodes.Node_Name (Child));
-                              Put_Line (">");
-                           elsif Child.Node_Type = Text_Node then
-                              if not Children_Printed then
-                                 New_Line;
-                                 Children_Printed := True;
-                              end if;
-                              Print_Text_Node (Child, Indent => True);
-                           end if;
-                        end loop;
+                           end loop;
 
-                        Put ("</");
-                        Put (Nodes.Node_Name (N));
-                        Put_Line (">");
+                           Put ("</");
+                           Put (Nodes.Node_Name (N));
+                           Put_Line (">");
 
-                     elsif N.Node_Type = Attribute_Node then
-                        Put (Nodes.Node_Name (N) & "=""");
-                        Put (Nodes.Node_Value (N));
-                        Put_Line ("""");
+                        elsif N.Node_Type = Attribute_Node then
+                           Put (Nodes.Node_Name (N) & "=""");
+                           Put (Nodes.Node_Value (N));
+                           Put_Line ("""");
 
-                     elsif N.Node_Type = Text_Node then
-                        Print_Text_Node (N);
-                     else
-                        Put (Nodes.Node_Value (N));
-                     end if;
-                  end loop Print_Nodes;
+                        elsif N.Node_Type = Text_Node then
+                           Print_Text_Node (N);
+                        else
+                           Put (Nodes.Node_Value (N));
+                        end if;
+                     end loop Print_Nodes;
 
-               exception
-                  when Malformed_XPath =>
-                     Put_Line ("Malformed query");
-               end Run_Query;
-            end if;
-         end Get_Query;
-      end loop Get_Commands;
+                  exception
+                     when Malformed_XPath =>
+                        Put_Line ("Malformed query");
+                  end Run_Query;
+               end if;
+            end Get_Query;
+         end loop Get_Commands;
 
-   end Get_Xml;
+      end Get_Xml;
+
+   exception
+      when Ada.Text_IO.End_Error =>
+         --  This happens if Read_Line gets no input (e.g., in alire-index CI).
+         null;
+
+      when Ada.Text_IO.Name_Error =>
+         -- This happens if there is a filename, but it's bad.
+         Ada.Text_IO.Put_Line ("invalid file name");
+   end Catch_Filename_Errors;
 
    Gnatcoll.Readline.Finalize (History_File => "test_xpath.history");
 

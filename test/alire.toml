@@ -1,6 +1,6 @@
 name = "test_xpath"
 description = "Test harness for xia. See ../README.md."
-version = "1.4.1"
+version = "1.4.1-1"
 licenses= "GPL-3.0-or-later"
 
 authors = ["Simon Wright"]
