@@ -1,7 +1,7 @@
-name = "test_xpath"
+name = "test_xia"
 description = "Test harness for xia. See ../README.md."
-version = "1.4.1"
-licenses= "GPL-3.0-or-later"
+version = "1.4.1-2"
+licenses = "GPL-3.0-or-later"
 
 authors = ["Simon Wright"]
 maintainers = ["Simon Wright <simon@pushface.org>"]
@@ -9,9 +9,10 @@ maintainers-logins = ["simonjwright"]
 
 project-files = ["test.gpr"]
 
-executables = ["test_xpath"]
+executables = ["test_aunit"]
 
 [[depends-on]]
+aunit = ">=21.0.0"
 gnatcoll_readline = ">=21.0.0"
 xia = "*"
 

@@ -1,3 +1,4 @@
 .build
 bench_xpath
+test_aunit
 test_xpath

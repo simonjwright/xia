@@ -1,8 +1,16 @@
+--  Copyright (C) 2013-2024 Simon Wright <simon@pushface.org>
+--  Licence: GPL-3.0-or-later
+
 with "XIA";
+
+with "aunit";
 with "gnatcoll_readline";
 
+with "config/test_xia_config.gpr";
+
 project Test is
-   for Main use ("bench_xpath.adb", "test_xpath.adb");
+   for Main use ("bench_xpath.adb", "test_aunit.adb", "test_xpath.adb");
+   for Source_Dirs use ("src");
    for Exec_Dir use ".";
    for Object_Dir use ".build";
    for Create_Missing_Dirs use "true";
@@ -15,10 +23,8 @@ project Test is
    end Builder;
 
    package Compiler is
-      for Default_Switches ("Ada") use
-        (
-         "-O0"
-        );
+      for Default_Switches ("Ada")
+      use Test_Xia_Config.Ada_Compiler_Switches;
    end Compiler;
 
    package Binder is
