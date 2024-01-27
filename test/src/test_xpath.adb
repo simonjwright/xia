@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------
 --                                                                           --
 --            XPATH IN ADA Copyright (C) 2004, McKae Technologies            --
---     XPATH IN ADA Copyright (C) 2021, Simon Wright <simon@pushface.org>    --
+--         Copyright (C) 2021-2024, Simon Wright <simon@pushface.org>        --
 --                                                                           --
 --  XPath in  Ada (XIA) is  free software;  you can redistribute  it and/or  --
 --  modify it under terms of the GNU General Public License as published by  --
@@ -25,12 +25,12 @@
 
 with Ada.Strings.Fixed;
 with Ada.Strings.Maps;
-with Dom.Core.Nodes;
-with Dom.Readers;
+with DOM.Core.Nodes;
+with DOM.Readers;
 with Input_Sources.File;
 with Unicode.CES;
 
-with Gnatcoll.Readline;
+with GNATCOLL.Readline;
 
 with XIA;
 
@@ -40,12 +40,12 @@ procedure Test_Xpath is
 
    use Ada.Strings.Fixed;
    use Ada.Strings.Maps;
-   use Dom.Core;
-   use Dom;
+   use DOM.Core;
+   use DOM;
    use Input_Sources;
    use XIA;
 
-   XML_Source_Reader : Dom.Readers.Tree_Reader;
+   XML_Source_Reader : DOM.Readers.Tree_Reader;
    Queried_Nodes     : Node_List;
    N                 : Node;
    Child             : Node;
@@ -59,7 +59,7 @@ procedure Test_Xpath is
       White_Space : constant String := ' ' & ASCII.LF & ASCII.CR & ASCII.HT;
       White_Space_Set : constant Character_Set := To_Set (White_Space);
 
-      S : Unicode.CES.Byte_Sequence :=
+      S : constant Unicode.CES.Byte_Sequence :=
         Trim (Nodes.Node_Value (T), White_Space_Set, White_Space_Set);
 
    begin
@@ -73,12 +73,12 @@ procedure Test_Xpath is
 
 begin
 
-   Gnatcoll.Readline.Initialize (Appname => "test_xpath",
+   GNATCOLL.Readline.Initialize (Appname => "test_xpath",
                                  History_File => "test_xpath.history");
 
-   Get_Xml:
+   Get_Xml :
    declare
-      Xml_File : constant String := Gnatcoll.Readline.Get_Line
+      Xml_File : constant String := GNATCOLL.Readline.Get_Line
         (Prompt => "Enter XML file name: ");
    begin
 
@@ -91,7 +91,7 @@ begin
       loop
          Get_Query :
          declare
-            Query : String := Gnatcoll.Readline.Get_Line
+            Query : constant String := GNATCOLL.Readline.Get_Line
               (Prompt => "Enter XPath query: ");
          begin
             exit Get_Commands when Query'Length = 0;
@@ -102,14 +102,14 @@ begin
                Run_Query :
                begin
                   Queried_Nodes :=
-                    Xpath_Query (Readers.Get_Tree (XML_Source_Reader), Query);
+                    XPath_Query (Readers.Get_Tree (XML_Source_Reader), Query);
                   Put_Line
                     ("Number of nodes:" &
-                       Natural'Image (Dom.Core.Nodes.Length (Queried_Nodes)));
+                       Natural'Image (DOM.Core.Nodes.Length (Queried_Nodes)));
 
-                  Print_Nodes:
+                  Print_Nodes :
                   for I in 0 .. Nodes.Length (Queried_Nodes) - 1 loop
-                     N := Dom.Core.Nodes.Item (Queried_Nodes, I);
+                     N := DOM.Core.Nodes.Item (Queried_Nodes, I);
 
                      if N.Node_Type = Element_Node then
                         Put ("<");
@@ -163,10 +163,10 @@ begin
 
    end Get_Xml;
 
-   Gnatcoll.Readline.Finalize (History_File => "test_xpath.history");
+   GNATCOLL.Readline.Finalize (History_File => "test_xpath.history");
 
 exception
    when others =>
-      Gnatcoll.Readline.Finalize (History_File => "test_xpath.history");
+      GNATCOLL.Readline.Finalize (History_File => "test_xpath.history");
       raise;
 end Test_Xpath;

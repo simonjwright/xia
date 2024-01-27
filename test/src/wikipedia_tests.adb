@@ -199,7 +199,9 @@ package body Wikipedia_Tests is
       Result : constant AUnit.Test_Suites.Access_Test_Suite
         := new AUnit.Test_Suites.Test_Suite;
    begin
+      pragma Warnings (Off, "use of an anonymous access type allocator");
       AUnit.Test_Suites.Add_Test (Result, new Tests.T);
+      pragma Warnings (On,  "use of an anonymous access type allocator");
 
       return Result;
    end Suite;
